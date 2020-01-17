@@ -54,7 +54,7 @@ class Client:
             status_code = self._get_status_code()
             print(status_code)
         except (ValueError, json.JSONDecodeError):
-            print('Failed to decode server message.')
+            print('Failed to decode server response.')
 
     def _get_status_code(self):
         """Get status code from server response.
