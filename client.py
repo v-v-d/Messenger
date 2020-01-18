@@ -81,4 +81,4 @@ class Client:
         :return: Dict with response body.
         """
         bytes_response = self._socket.recv(self.buffersize)
-        return json.loads(bytes_response).decode('UTF-8')
+        return json.loads(bytes_response.decode('UTF-8'))
