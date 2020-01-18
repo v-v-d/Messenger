@@ -33,6 +33,7 @@ class Server:
         """Session initialization by binding and listening socket."""
         self._socket.bind((self.host, self.port))
         self._socket.listen(self.max_connections)
+        print(f'Server was started with {self.host}:{self.port}.')
 
     def _get_request(self, client):
         """
@@ -42,7 +43,7 @@ class Server:
         """
         try:
             bytes_request = client.recv(self.buffersize)
-            request = json.loads(bytes_request).decode('UTF-8')
+            request = json.loads(bytes_request.decode('UTF-8'))
         except (ValueError, json.JSONDecodeError):
             print(f'Failed to decode client request.')
         else:
@@ -54,7 +55,8 @@ class Server:
         :param request: Dict with client request body.
         """
         response = self._make_response(request)
-        client.send(response)
+        bytes_response = json.dumps(response).encode('UTF-8')
+        client.send(bytes_response)
 
     def _make_response(self, request):
         """Make response based on request validation.
