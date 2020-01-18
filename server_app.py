@@ -4,13 +4,13 @@ import sys
 from server import Server
 
 
-listen_port = None
-listen_address = None
+LISTEN_PORT = None
+LISTEN_ADDRESS = None
 
 try:
     if '-p' in sys.argv:
-        listen_port = int(sys.argv[sys.argv.index('-p') + 1])
-        if not 1024 < listen_port < 65535:
+        LISTEN_PORT = int(sys.argv[sys.argv.index('-p') + 1])
+        if not 1024 < LISTEN_PORT < 65535:
             raise ValueError
 except IndexError:
     print('Port number required after key -\'p\'.')
@@ -21,19 +21,19 @@ except ValueError:
 
 try:
     if '-a' in sys.argv:
-        listen_address = sys.argv[sys.argv.index('-a') + 1]
+        LISTEN_ADDRESS = sys.argv[sys.argv.index('-a') + 1]
 except IndexError:
     print('IP address required after key -\'a\'.')
     sys.exit(1)
 
-if listen_address and listen_port:
-    server = Server(host=listen_address, port=listen_port)
-elif listen_address:
-    server = Server(host=listen_address)
-elif listen_port:
-    server = Server(port=listen_port)
+if LISTEN_ADDRESS and LISTEN_PORT:
+    SERVER = Server(host=LISTEN_ADDRESS, port=LISTEN_PORT)
+elif LISTEN_ADDRESS:
+    SERVER = Server(host=LISTEN_ADDRESS)
+elif LISTEN_PORT:
+    SERVER = Server(port=LISTEN_PORT)
 else:
     print('Listening host and port will be set by default.')
-    server = Server()
+    SERVER = Server()
 
-server.run()
+SERVER.run()
