@@ -10,7 +10,7 @@ class Client:
         """
         Client initialization.
         :param (str) host: Client IP address.
-        :param (int) port: Client port number.
+        :param (int) port: Server listening port.
         :param (int) buffersize: TCP max data size in bytes.
         :param (str) name: Username.
         """
