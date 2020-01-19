@@ -9,7 +9,7 @@ class Server:
         """
         Server initialization.
         :param (str) host: Server IP address.
-        :param (int) port: Server port number.
+        :param (int) port: Server listening port.
         :param (int) max_connections: Max connections queue.
         :param (int) buffersize: TCP max data size in bytes.
         """
