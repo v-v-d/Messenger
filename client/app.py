@@ -22,21 +22,21 @@ class Client:
 
     def run(self):
         """Run the client."""
-        self._connect()
+        self.connect()
         self._write()
         self._read()
         self._socket.close()
 
-    def _connect(self):
+    def connect(self):
         """Connect to server with host and port attributes."""
         self._socket.connect((self.host, self.port))
 
     def _write(self):
         """Send bytes request to server."""
-        bytes_request = json.dumps(self._get_request()).encode('UTF-8')
+        bytes_request = json.dumps(self.get_request()).encode('UTF-8')
         self._socket.send(bytes_request)
 
-    def _get_request(self):
+    def get_request(self):
         """Get request to server.
         :return: Dict with request body.
         """
@@ -61,11 +61,11 @@ class Client:
         :return: Status code.
         """
         response = self._get_response()
-        if self._is_valid(response):
+        if self.is_response_valid(response):
             return '200 : OK' if response['status'] == 200 else f'400 : {response["error"]}'
 
     @staticmethod
-    def _is_valid(response):
+    def is_response_valid(response):
         """
         Validate response.
         :param (dict) response: Response from server.
