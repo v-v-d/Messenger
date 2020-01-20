@@ -5,7 +5,9 @@ from app import Server
 from utils import get_socket_parameters
 
 
-SOCKET_PARAMETERS = get_socket_parameters()
-
-SERVER = Server(host=SOCKET_PARAMETERS.address, port=SOCKET_PARAMETERS.port)
-SERVER.run()
+try:
+    SOCKET_PARAMETERS = get_socket_parameters()
+    SERVER = Server(host=SOCKET_PARAMETERS.address, port=SOCKET_PARAMETERS.port)
+    SERVER.run()
+except ValueError as error:
+    print(error)

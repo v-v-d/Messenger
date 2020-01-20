@@ -16,4 +16,7 @@ def get_socket_parameters():
         '-p', '--port', type=int, default=7777,
         required=False, help='Set server listening port'
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if not 1024 <= args.port <= 65536:
+        raise ValueError(f'ValueError: port must be 1024-65535, {args.port} given')
+    return args
