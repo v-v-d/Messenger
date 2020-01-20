@@ -26,7 +26,7 @@ def port_fixture():
 @pytest.fixture
 def invalid_port_fixture():
     """
-    Server listening port fixture.
+    Invalid server listening port fixture.
     :return (tuple): Tuple with port key and value for command line.
     """
     return '-p', '10'
