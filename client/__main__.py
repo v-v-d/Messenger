@@ -5,7 +5,9 @@ from app import Client
 from utils import get_socket_parameters
 
 
-SOCKET_PARAMETERS = get_socket_parameters()
-
-CLIENT = Client(host=SOCKET_PARAMETERS.address, port=SOCKET_PARAMETERS.port)
-CLIENT.run()
+try:
+    SOCKET_PARAMETERS = get_socket_parameters()
+    CLIENT = Client(host=SOCKET_PARAMETERS.address, port=SOCKET_PARAMETERS.port)
+    CLIENT.run()
+except ValueError as error:
+    print(error)
