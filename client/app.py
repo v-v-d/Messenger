@@ -38,7 +38,7 @@ class Client:
 
     def get_request(self):
         """Get request to server.
-        :return: Dict with request body.
+        :return (dict): Dict with request body.
         """
         return {
             'action': 'presence',
@@ -58,7 +58,7 @@ class Client:
 
     def _get_status_code(self):
         """Get status code from server response.
-        :return: Status code.
+        :return (str): Status code.
         """
         response = self._get_response()
         if self.is_response_valid(response):
@@ -78,7 +78,7 @@ class Client:
 
     def _get_response(self):
         """Get decoded response from server.
-        :return: Dict with response body.
+        :return (dict): Dict with response body.
         """
         bytes_response = self._socket.recv(self.buffersize)
         return json.loads(bytes_response.decode('UTF-8'))
