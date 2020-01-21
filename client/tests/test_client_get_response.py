@@ -1,4 +1,4 @@
-"""Tests for client write Client class method."""
+"""Tests for client get_response Client class method."""
 import json
 from socket import socket, AF_INET, SOCK_STREAM
 

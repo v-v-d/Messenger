@@ -64,6 +64,13 @@ class Client:
         if self.is_response_valid(response):
             return '200 : OK' if response.get('status') == 200 else f'400 : {response.get("error")}'
 
+    def get_response(self):
+        """Get decoded response from server.
+        :return (dict): Dict with response body.
+        """
+        bytes_response = self.socket.recv(self.buffersize)
+        return json.loads(bytes_response.decode('UTF-8'))
+
     @staticmethod
     def is_response_valid(response):
         """
@@ -74,10 +81,3 @@ class Client:
         if 'status' in response:
             return True
         raise ValueError
-
-    def get_response(self):
-        """Get decoded response from server.
-        :return (dict): Dict with response body.
-        """
-        bytes_response = self.socket.recv(self.buffersize)
-        return json.loads(bytes_response.decode('UTF-8'))
