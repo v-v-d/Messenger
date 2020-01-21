@@ -47,9 +47,11 @@ def request_fixture(action_fixture, username_fixture):
 def test_valid_get_request(client_fixture, request_fixture):
     """Test for valid request returned from Client get_request method."""
     request = client_fixture.get_request()
-    action = request.get('action')
-    name = request.get('user').get('account_name')
-    assert action == request_fixture.get('action') and name == request_fixture.get('user').get('account_name')
+    real_action = request.get('action')
+    real_name = request.get('user').get('account_name')
+    mock_action = request_fixture.get('action')
+    mock_name = request_fixture.get('user').get('account_name')
+    assert real_action == mock_action and real_name == mock_name
 
 
 def test_invalid_get_request(client_fixture):
