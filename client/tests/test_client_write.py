@@ -64,7 +64,7 @@ def test_valid_write(client_fixture, server_socket_fixture, server_address_fixtu
         bytes_request_from_client = client.recv(1024)
         request_from_client = json.loads(bytes_request_from_client.decode('UTF-8'))
 
-        return request_to_server == request_from_client
+        assert request_to_server == request_from_client
 
     except Exception as error:
         raise AssertionError(f'Can\'t handle client-server application. Error: {error}')
