@@ -78,9 +78,9 @@ class Server:
         :param request: Dict with client request body.
         :return: True if request is valid, False otherwise.
         """
-        if ('action' in request and request['action'] == 'presence' and
+        if ('action' in request and request.get('action') == 'presence' and
                 'time' in request and 'user' in request and
-                request['user']['account_name'] == 'Guest'):
+                request.get('user').get('account_name') == 'Guest'):
             return True
         else:
             return False
