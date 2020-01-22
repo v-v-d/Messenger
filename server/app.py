@@ -9,7 +9,7 @@ class Server:
         """
         Server initialization.
         :param (str) host: Server IP address.
-        :param (int) port: Server port number.
+        :param (int) port: Server listening port.
         :param (int) max_connections: Max connections queue.
         :param (int) buffersize: TCP max data size in bytes.
         """
@@ -17,25 +17,25 @@ class Server:
         self.max_connections = max_connections
         self.host = host
         self.port = port
-        self._socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = socket(AF_INET, SOCK_STREAM)
 
     def run(self):
         """Run the server."""
-        self._init_session()
+        self.init_session()
         while True:
-            client, address = self._socket.accept()
-            request = self._get_request(client)
+            client, address = self.socket.accept()
+            request = self.get_request(client)
             if request:
                 print(f'Client {address[0]}:{address[1]} sent request: {request}')
-                self._write(client, request)
+                self.write(client, request)
 
-    def _init_session(self):
+    def init_session(self):
         """Session initialization by binding and listening socket."""
-        self._socket.bind((self.host, self.port))
-        self._socket.listen(self.max_connections)
+        self.socket.bind((self.host, self.port))
+        self.socket.listen(self.max_connections)
         print(f'Server was started with {self.host}:{self.port}.')
 
-    def _get_request(self, client):
+    def get_request(self, client):
         """
         Get decoded request from client.
         :param client: Client socket object.
@@ -49,21 +49,21 @@ class Server:
         else:
             return request if request else None
 
-    def _write(self, client, request):
+    def write(self, client, request):
         """Send response to client.
         :param client: Client socket object.
         :param request: Dict with client request body.
         """
-        response = self._make_response(request)
+        response = self.make_response(request)
         bytes_response = json.dumps(response).encode('UTF-8')
         client.send(bytes_response)
 
-    def _make_response(self, request):
+    def make_response(self, request):
         """Make response based on request validation.
         :param request: Dict with client request body.
         :return: Dict with server response body.
         """
-        if self._is_valid(request):
+        if self.is_request_valid(request):
             return {'status': 200}
         else:
             return {
@@ -72,15 +72,15 @@ class Server:
             }
 
     @staticmethod
-    def _is_valid(request):
+    def is_request_valid(request):
         """
         Validate request.
         :param request: Dict with client request body.
         :return: True if request is valid, False otherwise.
         """
-        if ('action' in request and request['action'] == 'presence' and
+        if ('action' in request and request.get('action') == 'presence' and
                 'time' in request and 'user' in request and
-                request['user']['account_name'] == 'Guest'):
+                request.get('user').get('account_name') == 'Guest'):
             return True
         else:
             return False

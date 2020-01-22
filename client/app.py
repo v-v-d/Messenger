@@ -10,7 +10,7 @@ class Client:
         """
         Client initialization.
         :param (str) host: Client IP address.
-        :param (int) port: Client port number.
+        :param (int) port: Server listening port.
         :param (int) buffersize: TCP max data size in bytes.
         :param (str) name: Username.
         """
@@ -18,27 +18,27 @@ class Client:
         self.host = host
         self.port = port
         self.name = name
-        self._socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = socket(AF_INET, SOCK_STREAM)
 
     def run(self):
         """Run the client."""
-        self._connect()
-        self._write()
-        self._read()
-        self._socket.close()
+        self.connect()
+        self.write()
+        self.read()
+        self.socket.close()
 
-    def _connect(self):
+    def connect(self):
         """Connect to server with host and port attributes."""
-        self._socket.connect((self.host, self.port))
+        self.socket.connect((self.host, self.port))
 
-    def _write(self):
+    def write(self):
         """Send bytes request to server."""
-        bytes_request = json.dumps(self._get_request()).encode('UTF-8')
-        self._socket.send(bytes_request)
+        bytes_request = json.dumps(self.get_request()).encode('UTF-8')
+        self.socket.send(bytes_request)
 
-    def _get_request(self):
+    def get_request(self):
         """Get request to server.
-        :return: Dict with request body.
+        :return (dict): Dict with request body.
         """
         return {
             'action': 'presence',
@@ -48,24 +48,31 @@ class Client:
             }
         }
 
-    def _read(self):
+    def read(self):
         """Read response from server."""
         try:
-            status_code = self._get_status_code()
+            status_code = self.get_status_code()
             print(status_code)
         except (ValueError, json.JSONDecodeError):
             print('Failed to decode server response.')
 
-    def _get_status_code(self):
+    def get_status_code(self):
         """Get status code from server response.
-        :return: Status code.
+        :return (str): Status code.
         """
-        response = self._get_response()
-        if self._is_valid(response):
-            return '200 : OK' if response['status'] == 200 else f'400 : {response["error"]}'
+        response = self.get_response()
+        if self.is_response_valid(response):
+            return '200 : OK' if response.get('status') == 200 else f'400 : {response.get("error")}'
+
+    def get_response(self):
+        """Get decoded response from server.
+        :return (dict): Dict with response body.
+        """
+        bytes_response = self.socket.recv(self.buffersize)
+        return json.loads(bytes_response.decode('UTF-8'))
 
     @staticmethod
-    def _is_valid(response):
+    def is_response_valid(response):
         """
         Validate response.
         :param (dict) response: Response from server.
@@ -73,12 +80,4 @@ class Client:
         """
         if 'status' in response:
             return True
-        else:
-            raise ValueError
-
-    def _get_response(self):
-        """Get decoded response from server.
-        :return: Dict with response body.
-        """
-        bytes_response = self._socket.recv(self.buffersize)
-        return json.loads(bytes_response.decode('UTF-8'))
+        raise ValueError
