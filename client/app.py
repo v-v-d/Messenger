@@ -1,7 +1,12 @@
 """Client side Messenger app."""
+import sys
 import json
+from logging import getLogger
+from logging.config import dictConfig
 from time import time
 from socket import socket, AF_INET, SOCK_STREAM
+
+from log.log_config import LOGGING
 
 
 class Client:
@@ -20,21 +25,32 @@ class Client:
         self.name = name
         self.socket = socket(AF_INET, SOCK_STREAM)
 
+        dictConfig(LOGGING)
+        self.logger = getLogger('client')
+
     def run(self):
         """Run the client."""
         self.connect()
         self.write()
         self.read()
         self.socket.close()
+        self.logger.info('Client shutdown.')
 
     def connect(self):
         """Connect to server with host and port attributes."""
-        self.socket.connect((self.host, self.port))
+        try:
+            self.socket.connect((self.host, self.port))
+            self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
+        except ConnectionRefusedError as error:
+            self.logger.critical(f'Connection closed. Error: {error}.')
+            sys.exit(1)
 
     def write(self):
         """Send bytes request to server."""
-        bytes_request = json.dumps(self.get_request()).encode('UTF-8')
+        request = self.get_request()
+        bytes_request = json.dumps(request).encode('UTF-8')
         self.socket.send(bytes_request)
+        self.logger.debug(f'Client send request {request}.')
 
     def get_request(self):
         """Get request to server.
@@ -52,15 +68,16 @@ class Client:
         """Read response from server."""
         try:
             status_code = self.get_status_code()
-            print(status_code)
+            self.logger.debug(f'Response status code: {status_code}.')
         except (ValueError, json.JSONDecodeError):
-            print('Failed to decode server response.')
+            self.logger.critical('Failed to decode server response.')
 
     def get_status_code(self):
         """Get status code from server response.
         :return (str): Status code.
         """
         response = self.get_response()
+        self.logger.debug(f'Client got response {response}.')
         if self.is_response_valid(response):
             return '200 : OK' if response.get('status') == 200 else f'400 : {response.get("error")}'
 
