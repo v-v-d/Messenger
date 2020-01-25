@@ -1,6 +1,10 @@
 """Server side Messenger app."""
 import json
+from logging import getLogger
+from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
+
+from log.log_config import LOGGING
 
 
 class Server:
@@ -19,21 +23,25 @@ class Server:
         self.port = port
         self.socket = socket(AF_INET, SOCK_STREAM)
 
+        dictConfig(LOGGING)
+        self.logger = getLogger('server')
+
     def run(self):
         """Run the server."""
         self.init_session()
         while True:
             client, address = self.socket.accept()
+            self.logger.info(f'Client was connected with {address[0]}:{address[1]}.')
             request = self.get_request(client)
             if request:
-                print(f'Client {address[0]}:{address[1]} sent request: {request}')
+                self.logger.debug(f'Client {address[0]}:{address[1]} sent request: {request}')
                 self.write(client, request)
 
     def init_session(self):
         """Session initialization by binding and listening socket."""
         self.socket.bind((self.host, self.port))
         self.socket.listen(self.max_connections)
-        print(f'Server was started with {self.host}:{self.port}.')
+        self.logger.info(f'Server was started with {self.host}:{self.port}.')
 
     def get_request(self, client):
         """
@@ -45,7 +53,7 @@ class Server:
             bytes_request = client.recv(self.buffersize)
             request = json.loads(bytes_request.decode('UTF-8'))
         except (ValueError, json.JSONDecodeError):
-            print(f'Failed to decode client request.')
+            self.logger.critical('Failed to decode client request.')
         else:
             return request if request else None
 
@@ -55,6 +63,7 @@ class Server:
         :param request: Dict with client request body.
         """
         response = self.make_response(request)
+        self.logger.debug(f'Server make response: {response}')
         bytes_response = json.dumps(response).encode('UTF-8')
         client.send(bytes_response)
 
