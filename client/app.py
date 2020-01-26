@@ -1,6 +1,7 @@
 """Client side Messenger app."""
 import sys
 import json
+from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
 from time import time
@@ -49,7 +50,7 @@ class Client:
         """Send bytes request to server."""
         request = self.get_request()
         bytes_request = json.dumps(request).encode('UTF-8')
-        self.socket.send(bytes_request)
+        self.socket.send(compress(bytes_request))
         self.logger.debug(f'Client send request {request}.')
 
     def get_request(self):
@@ -85,7 +86,7 @@ class Client:
         """Get decoded response from server.
         :return (dict): Dict with response body.
         """
-        bytes_response = self.socket.recv(self.buffersize)
+        bytes_response = decompress(self.socket.recv(self.buffersize))
         return json.loads(bytes_response.decode('UTF-8'))
 
     @staticmethod
