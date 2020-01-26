@@ -1,4 +1,4 @@
-"""Decorations for Messenger server side."""
+"""Decorators for Messenger server side."""
 from functools import wraps
 from inspect import currentframe
 from logging import getLogger
