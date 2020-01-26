@@ -8,6 +8,7 @@ from time import time
 from socket import socket, AF_INET, SOCK_STREAM
 
 from log.log_config import LOGGING
+from decorators import log
 
 
 class Client:
@@ -46,6 +47,7 @@ class Client:
             self.logger.critical(f'Connection closed. Error: {error}.')
             sys.exit(1)
 
+    @log
     def write(self):
         """Send bytes request to server."""
         request = self.get_request()
@@ -65,6 +67,7 @@ class Client:
             }
         }
 
+    @log
     def read(self):
         """Read response from server."""
         try:
