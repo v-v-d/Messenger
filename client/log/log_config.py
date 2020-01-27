@@ -12,6 +12,9 @@ LOGGING = {
         'default': {
             'format': '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
         },
+        'decorator': {
+            'format': '%(asctime)s - %(message)s',
+        },
     },
     'handlers': {
         'console': {
@@ -27,10 +30,20 @@ LOGGING = {
             'filename': FILE_PATH,
             'encoding': 'UTF-8',
         },
+        'decorator': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'decorator',
+            'stream': 'ext://sys.stdout',
+        },
     },
     'loggers': {
         'client': {
             'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+        'decorators': {
+            'handlers': ['decorator'],
             'level': 'DEBUG',
         },
     },

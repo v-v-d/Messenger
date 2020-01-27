@@ -1,10 +1,12 @@
 """Server side Messenger app."""
 import json
+from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
 from log.log_config import LOGGING
+from decorators import log
 
 
 class Server:
@@ -43,14 +45,15 @@ class Server:
         self.socket.listen(self.max_connections)
         self.logger.info(f'Server was started with {self.host}:{self.port}.')
 
+    @log
     def get_request(self, client):
         """
-        Get decoded request from client.
+        Get decoded and decompressed request from client.
         :param client: Client socket object.
         :return: Dict with client request body, None otherwise.
         """
         try:
-            bytes_request = client.recv(self.buffersize)
+            bytes_request = decompress(client.recv(self.buffersize))
             request = json.loads(bytes_request.decode('UTF-8'))
         except (ValueError, json.JSONDecodeError):
             self.logger.critical('Failed to decode client request.')
@@ -58,15 +61,16 @@ class Server:
             return request if request else None
 
     def write(self, client, request):
-        """Send response to client.
+        """Encode and compress response. Then send it to client.
         :param client: Client socket object.
         :param request: Dict with client request body.
         """
         response = self.make_response(request)
         self.logger.debug(f'Server make response: {response}')
         bytes_response = json.dumps(response).encode('UTF-8')
-        client.send(bytes_response)
+        client.send(compress(bytes_response))
 
+    @log
     def make_response(self, request):
         """Make response based on request validation.
         :param request: Dict with client request body.
@@ -83,7 +87,7 @@ class Server:
     @staticmethod
     def is_request_valid(request):
         """
-        Validate request.
+        Validate request by checking keys and values existence.
         :param request: Dict with client request body.
         :return: True if request is valid, False otherwise.
         """

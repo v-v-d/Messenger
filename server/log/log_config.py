@@ -12,6 +12,9 @@ LOGGING = {
         'default': {
             'format': '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
         },
+        'decorator': {
+            'format': '%(asctime)s - %(message)s',
+        },
     },
     'handlers': {
         'console': {
@@ -21,7 +24,7 @@ LOGGING = {
             'stream': 'ext://sys.stdout',
         },
         'file': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'default',
             'filename': FILE_PATH,
@@ -30,10 +33,20 @@ LOGGING = {
             'backupCount': 7,
             'encoding': 'UTF-8',
         },
+        'decorator': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'decorator',
+            'stream': 'ext://sys.stdout',
+        },
     },
     'loggers': {
         'server': {
             'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+        'decorators': {
+            'handlers': ['decorator'],
             'level': 'DEBUG',
         },
     },

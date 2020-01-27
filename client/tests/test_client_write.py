@@ -1,5 +1,6 @@
 """Tests for client write Client class method."""
 import json
+from zlib import decompress
 from socket import socket, AF_INET, SOCK_STREAM
 
 import pytest
@@ -57,14 +58,15 @@ def test_valid_write(client_fixture, server_socket_fixture, server_address_fixtu
         server_socket_fixture.listen(5)
 
         client_fixture.connect()
-        request_to_server = client_fixture.get_request()
         client_fixture.write()
 
         client, client_addr = server_socket_fixture.accept()
-        bytes_request_from_client = client.recv(1024)
-        request_from_client = json.loads(bytes_request_from_client.decode('UTF-8'))
+        request_from_client = json.loads(decompress(client.recv(1024)).decode('UTF-8'))
 
-        assert request_to_server == request_from_client
+        action = request_from_client.get('action')
+        username = request_from_client.get('user').get('account_name')
+
+        assert action == 'presence' and username == 'Guest'
 
     except Exception as error:
         raise AssertionError(f'Can\'t handle client-server application. Error: {error}')

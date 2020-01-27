@@ -31,7 +31,7 @@ def get_socket_params(*args):
     if is_port_valid(parser.port):
         return parser
     else:
-        raise ValueError(f'ValueError: port must be 1024-65535, {parser.port} given.')
+        raise ValueError(f'ValueError: port must be 1024-65536, {parser.port} given.')
 
 
 def is_port_valid(port):
@@ -40,4 +40,6 @@ def is_port_valid(port):
     :param (int) port: Server listening port.
     :return (bool): True if valid, False otherwise.
     """
-    return 1024 <= port <= 65536
+    min_port_value = 1024
+    max_port_value = 65536
+    return min_port_value <= port <= max_port_value
