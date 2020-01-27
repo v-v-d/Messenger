@@ -1,4 +1,4 @@
-"""Tests for client is_response_valid Client class method."""
+"""Tests for server is_request_valid Server class method."""
 from time import time
 
 import pytest
@@ -34,5 +34,5 @@ def test_valid_is_request_valid(valid_request_fixture):
 
 
 def test_invalid_is_response_valid(invalid_request_fixture):
-    """Test that method raises ValueError when invalid request passed."""
+    """Test that method returns False when valid request passed."""
     assert not Server.is_request_valid(invalid_request_fixture)
