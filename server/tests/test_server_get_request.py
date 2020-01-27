@@ -1,7 +1,7 @@
-"""Tests for server write Server class method."""
+"""Tests for server get_request Server class method."""
 import json
 from time import time
-from zlib import decompress
+from zlib import compress
 from socket import socket, AF_INET, SOCK_STREAM
 
 import pytest
@@ -55,14 +55,13 @@ def request_fixture():
     }
 
 
-def test_valid_write(
+def test_valid_get_request(
         server_fixture, server_address_fixture, server_port_fixture,
         client_address_fixture, request_fixture
 ):
     """
     Create client socket and get Server instance then set them up for interaction.
-    Make response from server based on request fixture, send it and receive it on
-    client socket. Then check that response have 200 status code.
+    Send request from client and get it on server. Then check that they are equal.
     """
     client_socket = socket(AF_INET, SOCK_STREAM)
 
@@ -73,11 +72,12 @@ def test_valid_write(
         client_socket.connect((client_address_fixture, server_port_fixture))
 
         client, client_addr = server_fixture.socket.accept()
-        server_fixture.write(client, request_fixture)
 
-        response_from_server = json.loads(decompress(client_socket.recv(1024)).decode('UTF-8'))
+        client_socket.send(compress(json.dumps(request_fixture).encode('UTF-8')))
 
-        assert response_from_server.get('status') == 200
+        request_from_server = server_fixture.get_request(client)
+
+        assert request_from_server == request_fixture
 
     except Exception as error:
         raise AssertionError(f'Can\'t handle client-server application. Error: {error}')
