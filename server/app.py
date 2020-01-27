@@ -48,7 +48,7 @@ class Server:
     @log
     def get_request(self, client):
         """
-        Get decoded request from client.
+        Get decoded and decompressed request from client.
         :param client: Client socket object.
         :return: Dict with client request body, None otherwise.
         """
@@ -61,7 +61,7 @@ class Server:
             return request if request else None
 
     def write(self, client, request):
-        """Send response to client.
+        """Encode and compress response. Then send it to client.
         :param client: Client socket object.
         :param request: Dict with client request body.
         """
