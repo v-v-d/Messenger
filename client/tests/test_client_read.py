@@ -1,5 +1,6 @@
 """Tests for client read Client class method."""
 import json
+from zlib import compress
 from socket import socket, AF_INET, SOCK_STREAM
 
 import pytest
@@ -70,8 +71,7 @@ def test_valid_read(
 
         client, client_addr = server_socket_fixture.accept()
 
-        bytes_response = json.dumps(ok_response_fixture).encode('UTF-8')
-        client.send(bytes_response)
+        client.send(compress(json.dumps(ok_response_fixture).encode('UTF-8')))
 
         assert client_fixture.read() is None
 

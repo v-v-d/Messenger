@@ -1,5 +1,6 @@
 """Tests for client get_response Client class method."""
 import json
+from zlib import compress
 from socket import socket, AF_INET, SOCK_STREAM
 
 import pytest
@@ -61,8 +62,7 @@ def test_valid_get_response(client_fixture, server_socket_fixture, server_addres
         client, client_addr = server_socket_fixture.accept()
 
         response_to_client = {'test': 'test'}
-        bytes_response = json.dumps(response_to_client).encode('UTF-8')
-        client.send(bytes_response)
+        client.send(compress(json.dumps(response_to_client).encode('UTF-8')))
 
         response_from_server = client_fixture.get_response()
 
