@@ -11,39 +11,75 @@ from decorators import log
 
 class Server:
     """Messenger server side main class."""
-    def __init__(self, host='0.0.0.0', port=7777, max_connections=5, buffersize=1024):
+    def __init__(self, host='0.0.0.0', port=7777, backlog=5, bufsize=1024):
         """
         Server initialization.
         :param (str) host: Server IP address.
         :param (int) port: Server listening port.
-        :param (int) max_connections: Max connections queue.
-        :param (int) buffersize: TCP max data size in bytes.
+        :param (int) backlog: The number of unaccepted connections that
+        the system will allow before refusing new connections.
+        :param (int) bufsize: The maximum amount of data to be received at once.
         """
-        self.buffersize = buffersize
-        self.max_connections = max_connections
+        self.bufsize = bufsize
+        self.backlog = backlog
         self.host = host
         self.port = port
-        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = None
+
+        self._requests = list()
+        self._connections = list()
+        self._r_list = list()
+        self._w_list = list()
+        self._x_list = list()
 
         dictConfig(LOGGING)
         self.logger = getLogger('server')
+
+    def __enter__(self):
+        if not self.socket:
+            self.socket = socket(AF_INET, SOCK_STREAM)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        message = 'Server shutdown'
+        if exc_type and exc_type is not KeyboardInterrupt:
+            message = 'Server stopped with error'
+        self.logger.info(message, exc_info=exc_val)
+        return True
 
     def run(self):
         """Run the server."""
         self.init_session()
         while True:
-            client, address = self.socket.accept()
-            self.logger.info(f'Client was connected with {address[0]}:{address[1]}.')
+            client, address = self._accept_client()
             request = self.get_request(client)
             if request:
                 self.logger.debug(f'Client {address[0]}:{address[1]} sent request: {request}')
                 self.write(client, request)
 
     def init_session(self):
-        """Session initialization by binding and listening socket."""
+        """Session initialization by binding and listen to address."""
         self.socket.bind((self.host, self.port))
-        self.socket.listen(self.max_connections)
+        self.socket.settimeout(0)
+        self.socket.listen(self.backlog)
         self.logger.info(f'Server was started with {self.host}:{self.port}.')
+
+    def _accept_client(self):
+        """
+        Accept a connection from listening address and add it
+        to connections list.
+        :return (tuple): A pair (client, address) where client
+        is a new client socket object usable to send and receive
+        data, and address is the client address.
+        """
+        try:
+            client, address = self.socket.accept()
+        except OSError:
+            pass
+        else:
+            self.logger.info(f'Client was connected with {address[0]}:{address[1]}.')
+            self._connections.append(client)
+            return client, address
 
     @log
     def get_request(self, client):
@@ -53,7 +89,7 @@ class Server:
         :return: Dict with client request body, None otherwise.
         """
         try:
-            bytes_request = decompress(client.recv(self.buffersize))
+            bytes_request = decompress(client.recv(self.bufsize))
             request = json.loads(bytes_request.decode('UTF-8'))
         except (ValueError, json.JSONDecodeError):
             self.logger.critical('Failed to decode client request.')
