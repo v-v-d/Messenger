@@ -38,7 +38,10 @@ def server_fixture(server_address_fixture, server_port_fixture):
     """Server instance fixture.
     :return (<class 'app.Server'>): Server instance object.
     """
-    return Server(host=server_address_fixture, port=server_port_fixture)
+    host = server_address_fixture
+    port = server_port_fixture
+    with Server(host=host, port=port) as server_socket:
+        return server_socket
 
 
 @pytest.fixture
