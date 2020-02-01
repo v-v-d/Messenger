@@ -6,7 +6,7 @@ from logging import getLogger
 from logging.config import dictConfig
 
 from app import Server
-from utils import get_socket_params
+from utils import get_valid_parser
 from log.log_config import LOGGING
 
 
@@ -14,9 +14,9 @@ dictConfig(LOGGING)
 LOGGER = getLogger('server')
 
 try:
-    SOCKET_PARAMS = get_socket_params()
+    PARSER = get_valid_parser()
 
-    with Server(host=SOCKET_PARAMS.address, port=SOCKET_PARAMS.port) as server:
+    with Server(host=PARSER.address, port=PARSER.port) as server:
         server.run()
 
 except ValueError as error:

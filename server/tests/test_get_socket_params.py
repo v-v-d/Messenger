@@ -34,11 +34,11 @@ def invalid_port_fixture():
 
 def test_valid_get_socket_params(address_fixture, port_fixture):
     """Test that function returns argparse.Namespace type namespace when valid args are passed."""
-    socket_params = get_socket_params((*address_fixture, *port_fixture))
+    socket_params = get_valid_parser((*address_fixture, *port_fixture))
     assert type(socket_params) == Namespace
 
 
 def test_invalid_get_socket_params(address_fixture, invalid_port_fixture):
     """Test that function raises ValueError when invalid port passed."""
     with pytest.raises(ValueError):
-        get_socket_params((*address_fixture, *invalid_port_fixture))
+        get_valid_parser((*address_fixture, *invalid_port_fixture))
