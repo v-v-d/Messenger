@@ -17,10 +17,18 @@ def parse_args(*args):
         '-p', '--port', type=int, default=7777,
         required=False, help='Set server listening port'
     )
+    parser.add_argument(
+        '-n', '--name', type=str, default='Guest',
+        required=False, help='Set username'
+    )
+    parser.add_argument(
+        '-m', '--mode', type=str, default='recv',
+        required=False, help='Set client mode [recv, send]'
+    )
     return parser.parse_args(*args)
 
 
-def get_socket_params(*args):
+def get_valid_parser(*args):
     """
     Get the client IP address and server listening port from command line.
     Address = 'localhost' and port = 7777 is set by default.
@@ -28,16 +36,27 @@ def get_socket_params(*args):
     :return (argparse.Namespace): Namespace with socket parameters if port is valid, raise ValueError otherwise.
     """
     parser = parse_args(*args)
-    if is_port_valid(parser.port):
+    if is_parser_valid(parser):
         return parser
     else:
-        raise ValueError(f'ValueError: port must be 1024-65535, {parser.port} given.')
+        raise ValueError(
+            f'Error: port must be 1024-65535, {parser.port} given, mode must be in [recv, send]. {parser.mode} given.'
+        )
 
 
-def is_port_valid(port):
+def is_parser_valid(parser):
     """
-    Validate port.
-    :param (int) port: Server listening port.
+    Validate parser.
+    :param (argparse.Namespace) parser: Parser namespace.
     :return (bool): True if valid, False otherwise.
     """
-    return 1024 <= port <= 65536
+    return 1024 <= parser.port <= 65536 and parser.mode in ('recv', 'send')
+#
+#
+# def is_port_valid(port):
+#     """
+#     Validate port.
+#     :param (int) port: Server listening port.
+#     :return (bool): True if valid, False otherwise.
+#     """
+#     return 1024 <= port <= 65536
