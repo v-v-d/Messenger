@@ -1,5 +1,6 @@
 """Server side Messenger app."""
 import json
+from select import select
 from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
@@ -41,24 +42,30 @@ class Server:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        message = 'Server shutdown'
+        message = 'Server shutdown.'
         if exc_type and exc_type is not KeyboardInterrupt:
-            message = 'Server stopped with error'
-        self.logger.info(message, exc_info=exc_val)
+            message = f'Server stopped with error: {exc_val}'
+        self.logger.info(message)
         return True
 
     def run(self):
-        """Run the server."""
+        """
+        Initialize non-blocking session. Accept and handle
+        clients. Read clients requests and write to them
+        responses.
+        """
         self.init_session()
         while True:
-            client, address = self._accept_client()
-            request = self.get_request(client)
-            if request:
-                self.logger.debug(f'Client {address[0]}:{address[1]} sent request: {request}')
-                self.write(client, request)
+            self._accept_client()
+            self._handle_clients()
+            self._read()
+            self._write()
 
     def init_session(self):
-        """Session initialization by binding and listen to address."""
+        """
+        Non-blocking session initialization by binding and
+        listen to socket.
+        """
         self.socket.bind((self.host, self.port))
         self.socket.settimeout(0)
         self.socket.listen(self.backlog)
@@ -74,51 +81,88 @@ class Server:
         """
         try:
             client, address = self.socket.accept()
-        except OSError:
-            pass
-        else:
             self.logger.info(f'Client was connected with {address[0]}:{address[1]}.')
             self._connections.append(client)
-            return client, address
+        except Exception:
+            pass
 
-    @log
+    def _handle_clients(self):
+        """
+        Try to handle clients using the select() method if connections
+        exist. Existing connections checking needed only for Windows.
+        """
+        if self._connections:
+            self._r_list, self._w_list, self._x_list = select(
+                self._connections, self._connections, self._connections, 0
+            )
+
+    def _read(self):
+        """
+        Get request from each other client in read list and add it
+        to requests list. Remove client from connections list if
+        exception was caught.
+        """
+        for client in self._r_list:
+            try:
+                self.get_request(client)
+            except (ValueError, json.JSONDecodeError):
+                self.logger.critical('Failed to decode client request.')
+            except Exception:
+                self._remove_client(client)
+
     def get_request(self, client):
         """
-        Get decoded and decompressed request from client.
-        :param client: Client socket object.
-        :return: Dict with client request body, None otherwise.
+        Get decoded and decompressed request from client. Add it
+        to requests list.
+        :param (<class 'socket.socket'>) client: Client socket object.
         """
-        try:
-            bytes_request = decompress(client.recv(self.bufsize))
-            request = json.loads(bytes_request.decode('UTF-8'))
-        except (ValueError, json.JSONDecodeError):
-            self.logger.critical('Failed to decode client request.')
-        else:
-            return request if request else None
+        bytes_request = decompress(client.recv(self.bufsize))
+        request = json.loads(bytes_request.decode('UTF-8'))
+        self.logger.debug(f'Client send request: {request}')
+        self._requests.append(request)
 
-    def write(self, client, request):
-        """Encode and compress response. Then send it to client.
-        :param client: Client socket object.
-        :param request: Dict with client request body.
+    def _remove_client(self, client):
         """
-        response = self.make_response(request)
-        self.logger.debug(f'Server make response: {response}')
-        bytes_response = json.dumps(response).encode('UTF-8')
-        client.send(compress(bytes_response))
+        Remove client from connections list if client exist in it.
+        :param (<class 'socket.socket'>) client: Client socket object.
+        """
+        if client in self._connections:
+            host, port = client.getpeername()
+            self.logger.info(f'Client {host}:{port} was disconnected.')
+            self._connections.remove(client)
+
+    def _write(self):
+        """
+        Check the requests list. If it's not empty make response,
+        encode and compress it and try to send it to all waiting
+        clients. Remove client from connections list if exception
+        was caught.
+        """
+        if self._requests:
+            bytes_response = json.dumps(self.make_response()).encode('UTF-8')
+            for client in self._w_list:
+                try:
+                    client.send(compress(bytes_response))
+                except Exception:
+                    self._remove_client(client)
 
     @log
-    def make_response(self, request):
-        """Make response based on request validation.
-        :param request: Dict with client request body.
+    def make_response(self):
+        """
+        Get the last request from requests list. Make response
+        based on request validation.
         :return: Dict with server response body.
         """
+        request = self._requests.pop()
         if self.is_request_valid(request):
-            return {'status': 200}
+            response = {'status': 200}
         else:
-            return {
+            response = {
                 'status': 400,
                 'error': 'Bad Request',
             }
+        self.logger.debug(f'Server make response: {response}')
+        return response
 
     @staticmethod
     def is_request_valid(request):
@@ -133,3 +177,5 @@ class Server:
             return True
         else:
             return False
+
+# TODO: Update methods for privacy and openness.
