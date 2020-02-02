@@ -20,7 +20,7 @@ def parse_args(*args):
     return parser.parse_args(*args)
 
 
-def get_socket_params(*args):
+def get_valid_parser(*args):
     """
     Get the server IP address and server listening port from command line.
     Address = '0.0.0.0' and port = 7777 is set by default.
