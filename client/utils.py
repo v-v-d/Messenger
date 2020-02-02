@@ -8,7 +8,7 @@ def parse_args(*args):
     :param (Tuple) args: Tuple with arguments for parser.
     :return (argparse.Namespace): Namespace with added arguments.
     """
-    parser = ArgumentParser(description='Set the client IP address and server listening port.')
+    parser = ArgumentParser(description='Set the client parameters')
     parser.add_argument(
         '-a', '--address', type=str, default='localhost',
         required=False, help='Set client IP address'
@@ -20,10 +20,6 @@ def parse_args(*args):
     parser.add_argument(
         '-n', '--name', type=str, default='Guest',
         required=False, help='Set username'
-    )
-    parser.add_argument(
-        '-m', '--mode', type=str, default='recv',
-        required=False, help='Set client mode [recv, send]'
     )
     return parser.parse_args(*args)
 
@@ -38,10 +34,7 @@ def get_valid_parser(*args):
     parser = parse_args(*args)
     if is_parser_valid(parser):
         return parser
-    else:
-        raise ValueError(
-            f'Error: port must be 1024-65535, {parser.port} given, mode must be in [recv, send]. {parser.mode} given.'
-        )
+    raise ValueError(f'Error: port must be 1024-65536, {parser.port} given.')
 
 
 def is_parser_valid(parser):
@@ -50,13 +43,6 @@ def is_parser_valid(parser):
     :param (argparse.Namespace) parser: Parser namespace.
     :return (bool): True if valid, False otherwise.
     """
-    return 1024 <= parser.port <= 65536 and parser.mode in ('recv', 'send')
-#
-#
-# def is_port_valid(port):
-#     """
-#     Validate port.
-#     :param (int) port: Server listening port.
-#     :return (bool): True if valid, False otherwise.
-#     """
-#     return 1024 <= port <= 65536
+    min_port_value = 1024
+    max_port_value = 65536
+    return min_port_value <= parser.port <= max_port_value
