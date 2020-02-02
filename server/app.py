@@ -62,6 +62,7 @@ class Server:
             self._read()
             self._write()
 
+    @log
     def init_session(self):
         """
         Non-blocking session initialization by binding and
@@ -122,7 +123,6 @@ class Server:
         self.logger.debug(f'Client send request: {request}')
         self._requests.append(request)
 
-    @log
     def _remove_client(self, client):
         """
         Remove client from connections list if client exist in it.

@@ -2,6 +2,18 @@
 from time import time
 
 
+def is_response_valid(response):
+    """
+    Check for valid keys in response.
+    :param (dict) response: Dict from server with response body.
+    :return (bool) : True if all valid keys in response, False otherwise.
+    """
+    valid_keys = ('action', 'time', 'data', 'code')
+    if all(key in response for key in valid_keys):
+        return True
+    raise ValueError
+
+
 def make_request(action, data, user):
     """
     Make request based on passed arguments and timestamp.
