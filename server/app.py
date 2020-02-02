@@ -7,6 +7,7 @@ from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
 from log.log_config import LOGGING
+from handler import handle_request
 from decorators import log
 
 
@@ -121,6 +122,7 @@ class Server:
         self.logger.debug(f'Client send request: {request}')
         self._requests.append(request)
 
+    @log
     def _remove_client(self, client):
         """
         Remove client from connections list if client exist in it.
@@ -139,43 +141,10 @@ class Server:
         was caught.
         """
         if self._requests:
-            bytes_response = json.dumps(self.make_response()).encode('UTF-8')
+            response = handle_request(self._requests.pop())
+            bytes_response = json.dumps(response).encode('UTF-8')
             for client in self._w_list:
                 try:
                     client.send(compress(bytes_response))
                 except Exception:
                     self._remove_client(client)
-
-    @log
-    def make_response(self):
-        """
-        Get the last request from requests list. Make response
-        based on request validation.
-        :return: Dict with server response body.
-        """
-        request = self._requests.pop()
-        if self.is_request_valid(request):
-            response = {'status': 200}
-        else:
-            response = {
-                'status': 400,
-                'error': 'Bad Request',
-            }
-        self.logger.debug(f'Server make response: {response}')
-        return response
-
-    @staticmethod
-    def is_request_valid(request):
-        """
-        Validate request by checking keys and values existence.
-        :param request: Dict with client request body.
-        :return: True if request is valid, False otherwise.
-        """
-        if ('action' in request and request.get('action') == 'presence' and
-                'time' in request and 'user' in request and
-                request.get('user').get('account_name') == 'Guest'):
-            return True
-        else:
-            return False
-
-# TODO: Update methods for privacy and openness.
