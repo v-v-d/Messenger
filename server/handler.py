@@ -56,11 +56,11 @@ def get_response_data(request):
     :return (str) : Data to client.
     """
     action = request.get('action')
-    data = None
+    data = dict.fromkeys(['user', 'text'])
 
     if action == 'presence':
-        data = ''
+        data['user'] = request.get('user')
     elif action == 'echo':
-        data = request.get('data')
+        data = {key: request.get(key) for key in data.keys()}
 
     return data
