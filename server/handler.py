@@ -61,6 +61,6 @@ def get_response_data(request):
     if action == 'presence':
         data['user'] = request.get('user')
     elif action == 'echo':
-        data = {key: request.get(key) for key in data.keys()}
+        data['user'], data['text'] = request.get('user'), request.get('data')
 
     return data
