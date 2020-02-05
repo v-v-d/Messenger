@@ -2,6 +2,7 @@
 from logging import getLogger
 from logging.config import dictConfig
 
+from clients_db import is_client_in_db
 from log.log_config import LOGGING
 from protocol import is_request_valid, make_response
 
@@ -19,9 +20,14 @@ def handle_request(request):
         if is_request_valid(request):
             action = request.get('action')
             if is_action_valid(action):
-                data = get_response_data(request)
-                response = make_response(request, 200, data)
-                LOGGER.debug(f'Server make response: {response}.')
+                to_client = request.get('data').get('to_user')
+                if is_client_in_db(to_client):
+                    data = get_response_data(request)
+                    response = make_response(request, 200, data)
+                else:
+                    message = f'Can\'t send message to {to_client}. User with this name does not exist.'
+                    response = make_response(request, 404, message)
+                    LOGGER.error(message)
             else:
                 response = make_response(request, 404, f'Action "{action}" not supported.')
                 LOGGER.error(f'Action "{action}" not found.')
@@ -56,11 +62,12 @@ def get_response_data(request):
     :return (str) : Data to client.
     """
     action = request.get('action')
-    data = dict.fromkeys(['user', 'text'])
+    client = request.get('user')
 
     if action == 'presence':
-        data['user'] = request.get('user')
-    elif action == 'echo':
-        data['user'], data['text'] = request.get('user'), request.get('data')
+        data = f'{client}, welcome to messenger!'
+    else:
+        text = request.get('data').get('text')
+        data = f'{client}: {text}'
 
     return data
