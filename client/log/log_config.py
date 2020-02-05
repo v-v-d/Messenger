@@ -1,6 +1,8 @@
 """Basic configuration for the client logging system."""
 import os
 
+from settings import DEBUG
+
 
 FILENAME = 'client.log'
 CURRENT_PATH = os.path.dirname(os.path.relpath(__file__))
@@ -24,7 +26,7 @@ LOGGING = {
             'stream': 'ext://sys.stdout',
         },
         'file': {
-            'level': 'INFO',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.FileHandler',
             'formatter': 'default',
             'filename': FILE_PATH,
@@ -39,11 +41,11 @@ LOGGING = {
     },
     'loggers': {
         'client': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console', 'file'] if DEBUG else ['file'],
             'level': 'DEBUG',
         },
         'decorators': {
-            'handlers': ['decorator'],
+            'handlers': ['decorator'] if DEBUG else [],
             'level': 'DEBUG',
         },
     },

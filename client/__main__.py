@@ -14,12 +14,9 @@ LOGGER = getLogger('client')
 
 try:
     PARSER = get_valid_parser()
-    HOST = PARSER.address
-    PORT = PARSER.port
-    NAME = PARSER.name
-    MODE = PARSER.mode
+    HOST, PORT, NAME = PARSER.address, PARSER.port, PARSER.name
 
-    with Client(host=HOST, port=PORT, name=NAME, mode=MODE) as client:
+    with Client(host=HOST, port=PORT, name=NAME) as client:
         client.run()
 
 except ValueError as error:
