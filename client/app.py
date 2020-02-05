@@ -46,8 +46,8 @@ class Client:
     def run(self):
         """Run the client."""
         self.connect()
-        self.write()
         self.read()
+        self.write()
         self.check_threads_health()
 
     @log
@@ -55,9 +55,17 @@ class Client:
         """Connect to server with host and port attributes."""
         try:
             self.socket.connect((self.host, self.port))
+            self._send_identify_message()
             self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
         except (ConnectionResetError, ConnectionError, ConnectionAbortedError) as error:
             self.logger.critical(f'Connection closed. Error: {error}.')
+
+    def _send_identify_message(self):
+        """Send presence message for identify client on the server side."""
+        data = {'text': None, 'to_user': self.name}
+        request = make_request('presence', data, self.name)
+        bytes_request = json.dumps(request).encode('UTF-8')
+        self.socket.send(zlib.compress(bytes_request))
 
     def write(self):
         """Start writer thread for sending requests to server."""
@@ -80,8 +88,14 @@ class Client:
         """Get request to server.
         :return (dict): Dict with request body.
         """
-        action = input('action: ')
-        data = input('data: ')
+        action = 'echo'
+        text = input('message: ')
+        to_user = input('to user: ')
+
+        if not to_user:
+            to_user = self.name
+
+        data = {'text': text, 'to_user': to_user}
         return make_request(action, data, self.name)
 
     def read(self):
@@ -118,15 +132,11 @@ class Client:
         Print message from user or error message from server.
         :param (dict) response: Dict with response body.
         """
-        data = response.get('data')
         code = response.get('code')
+        data = response.get('data')
+        message = data if code is 200 else f'{code}: {data}'
 
-        if isinstance(data, dict):
-            message = f'\n{data.get("user")}: {data.get("text")}'
-        else:
-            message = f'\n{code}: {data}'
-
-        print(message)
+        print(f'\nYou got message:\n{message}\n')
 
     @staticmethod
     def check_threads_health():
