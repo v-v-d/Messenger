@@ -3,23 +3,27 @@ from subprocess import Popen, CREATE_NEW_CONSOLE
 
 PROCESS = []
 
+
+def kill_all_process():
+    while PROCESS:
+        victim = PROCESS.pop()
+        victim.kill()
+
+
 while True:
     ACTION = input('Выберите действие: q - выход, '
-                   's - запустить сервер и клиенты, x - закрыть все окна: ')
+                   's - запустить сервер и клиенты, '
+                   'x - закрыть все окна: ')
 
     if ACTION == 'q':
+        kill_all_process()
         break
 
     elif ACTION == 's':
         PROCESS.append(Popen(['python', 'server'], creationflags=CREATE_NEW_CONSOLE))
 
-        for i in range(1, 3):
-            PROCESS.append(Popen(f'python client -n user_{i} -m send -n noname', creationflags=CREATE_NEW_CONSOLE))
+        for i in range(1, 4):
+            PROCESS.append(Popen(f'python client -n user_{i}', creationflags=CREATE_NEW_CONSOLE))
 
-        for _ in range(3):
-            PROCESS.append(Popen('python client', creationflags=CREATE_NEW_CONSOLE))
-
-    if ACTION == 'q' or ACTION == 'x':
-        while PROCESS:
-            VICTIM = PROCESS.pop()
-            VICTIM.kill()
+    elif ACTION == 'x':
+        kill_all_process()
