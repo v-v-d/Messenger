@@ -3,20 +3,12 @@ from subprocess import Popen, CREATE_NEW_CONSOLE
 
 PROCESS = []
 
-
-def kill_all_process():
-    while PROCESS:
-        victim = PROCESS.pop()
-        victim.kill()
-
-
 while True:
     ACTION = input('Выберите действие: q - выход, '
                    's - запустить сервер и клиенты, '
                    'x - закрыть все окна: ')
 
     if ACTION == 'q':
-        kill_all_process()
         break
 
     elif ACTION == 's':
@@ -26,4 +18,6 @@ while True:
             PROCESS.append(Popen(f'python client -n user_{i}', creationflags=CREATE_NEW_CONSOLE))
 
     elif ACTION == 'x':
-        kill_all_process()
+        while PROCESS:
+            victim = PROCESS.pop()
+            victim.kill()
