@@ -5,19 +5,19 @@ from logging import getLogger
 from logging.config import dictConfig
 
 from app import Client
-from utils import get_valid_parser
+from utils import parse_args
 from log.log_config import LOGGING
 
 
 dictConfig(LOGGING)
 LOGGER = getLogger('client')
 
-try:
-    PARSER = get_valid_parser()
-    HOST, PORT, NAME = PARSER.address, PARSER.port, PARSER.name
+PARSER = parse_args()
+HOST, PORT, NAME = PARSER.address, PARSER.port, PARSER.name
 
+try:
     with Client(host=HOST, port=PORT, name=NAME) as client:
         client.run()
 
 except ValueError as error:
-    LOGGER.error(f'{error}.')
+    LOGGER.critical(f'Can\'t run the client. Error: {error}')

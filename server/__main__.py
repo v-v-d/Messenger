@@ -6,18 +6,18 @@ from logging import getLogger
 from logging.config import dictConfig
 
 from app import Server
-from utils import get_valid_parser
+from utils import parse_args
 from log.log_config import LOGGING
 
 
 dictConfig(LOGGING)
 LOGGER = getLogger('server')
 
-try:
-    PARSER = get_valid_parser()
+PARSER = parse_args()
 
+try:
     with Server(host=PARSER.address, port=PARSER.port) as server:
         server.run()
 
 except ValueError as error:
-    LOGGER.error(f'{error}.')
+    LOGGER.critical(f'Can\'t run the server. Error: {error}')

@@ -10,10 +10,16 @@ from log.log_config import LOGGING
 from handler import handle_request
 from decorators import log
 from clients_db import add_client_to_db, get_client_from_db, remove_client_from_db
+from metaclasses import ServerVerifier
+from descriptors import HostValidator, PortValidator, BufsizeValidator
 
 
-class Server:
+class Server(metaclass=ServerVerifier):
     """Messenger server side main class."""
+    host = HostValidator()
+    port = PortValidator()
+    bufsize = BufsizeValidator()
+
     def __init__(self, host='0.0.0.0', port=7777, backlog=5, bufsize=1024):
         """
         Server initialization.
