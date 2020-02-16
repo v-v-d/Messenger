@@ -10,10 +10,16 @@ from threading import Thread, enumerate
 from log.log_config import LOGGING
 from protocol import is_response_valid, make_request
 from decorators import log
+from descriptors import PortValidator, HostValidator, BufsizeValidator
+from metaclasses import ClientVerifier
 
 
-class Client:
+class Client(metaclass=ClientVerifier):
     """Messenger client side main class."""
+    host = HostValidator()
+    port = PortValidator()
+    bufsize = BufsizeValidator()
+
     def __init__(self, host='127.0.0.1', port=7777, bufsize=1024, name='Guest'):
         """
         Client initialization.
