@@ -1,5 +1,9 @@
 """Client side utility functions for Messenger app."""
+import json
+import zlib
 from argparse import ArgumentParser
+
+from protocol import make_request
 
 
 def parse_args(*args):
@@ -22,3 +26,16 @@ def parse_args(*args):
         required=False, help='Set username'
     )
     return parser.parse_args(*args)
+
+
+def make_presence_message(socket, r_addr, l_addr, client_name):
+    """Send presence message for identify client on the server side."""
+    data = json.dumps({'client': client_name})  # TODO: Убрать json.dumps() после появления GUI
+    request = make_request(
+        action='presence',
+        data=data,
+        r_addr=r_addr,
+        l_addr=l_addr,
+    )
+    bytes_request = json.dumps(request).encode('UTF-8')
+    socket.send(zlib.compress(bytes_request))
