@@ -6,9 +6,10 @@ from db.models import Client, Message, ClientSession, ClientContact
 from db.database import session_scope
 from db.utils import get_message, login, authenticate
 from protocol import make_response
-
+from utils import get_socket_info
 
 # TODO: Добавить валидацию реквестов
+
 
 def register_controller(request):
     data = request.get('data')
@@ -105,14 +106,13 @@ def message_controller(request):
 
             query = session.query(ClientSession).filter_by(client_id=to_client)
             to_client_session = query.filter_by(closed=None).first()
-            addr, port = to_client_session.remote_addr, to_client_session.remote_port
 
-            socket_info = request.get('address')
-            remote_socket_info = socket_info.get('remote')
-            remote_socket_info['addr'], remote_socket_info['port'] = addr, port
+            if to_client_session:
+                addr, port = to_client_session.remote_addr, to_client_session.remote_port
+                r_addr = get_socket_info(addr, port)
 
-            data = {'text': text, 'from': from_client.name, 'time': request.get('time')}
-            response = make_response(request, 200, data)
+                data = {'text': text, 'from': from_client.name, 'time': request.get('time')}
+                response = make_response(request, 200, data, r_addr)
 
         except AttributeError:
             data = {'text': f'Client with id #{to_client} not found.'}
