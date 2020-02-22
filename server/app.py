@@ -151,17 +151,25 @@ class Server(metaclass=ServerVerifier):
 
             if request.get('data'):
                 request['data'] = json.loads(request.get('data'))   # TODO: Убрать после появления GUI
-            remote_socket_info = request.get('address').get('remote')
-            r_addr, r_port = remote_socket_info.get('addr'), remote_socket_info.get('port')
 
             response = handle_request(request)
-            if response:
-                for client in self._connections:
-                    if client.getpeername() == (r_addr, r_port):
-                        bytes_response = json.dumps(response).encode('UTF-8')
-                        try:
-                            client.send(compress(bytes_response))
-                            self.logger.debug(f'Server make response: {response}.')
 
-                        except:
-                            self._remove_client(client)
+            if response:
+                remote_socket_info = self._get_remote_socket_info(response)
+                for client in self._connections:
+                    if client.getpeername() == remote_socket_info:
+                        self._write_to_current_client(response, client)
+
+    @staticmethod
+    def _get_remote_socket_info(response):
+        remote_socket_info = response.get('address').get('remote')
+        return remote_socket_info.get('addr'), remote_socket_info.get('port')
+
+    def _write_to_current_client(self, response, client):
+        bytes_response = json.dumps(response).encode('UTF-8')
+        try:
+            client.send(compress(bytes_response))
+            self.logger.debug(f'Server make response: {response}.')
+
+        except:
+            self._remove_client(client)

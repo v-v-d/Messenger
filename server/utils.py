@@ -1,5 +1,6 @@
 """Server side utility functions for Messenger app."""
 from argparse import ArgumentParser
+from collections import namedtuple
 
 
 def parse_args(*args):
@@ -22,3 +23,8 @@ def parse_args(*args):
         required=False, help='Propagate changes into database'
     )
     return parser.parse_args(*args)
+
+
+def get_socket_info(addr, port):
+    Socket_info = namedtuple('Socket_info', ['addr', 'port'])
+    return Socket_info(addr, port)

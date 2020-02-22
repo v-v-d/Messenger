@@ -1,4 +1,5 @@
 """Protocol for server side of Messenger app."""
+from utils import get_socket_info
 
 
 def is_request_valid(request):
@@ -11,17 +12,20 @@ def is_request_valid(request):
     return all(key in request for key in valid_keys)
 
 
-def make_response(request, code, data=None):
+def make_response(request, code, data=None, r_addr=None, l_addr=None):
     """
     Make response based on passed request, status code and data.
     :param (dict) request: Dict from client with request body.
     :param (int) code: Status code.
     :param (str) data: Transmitted server data (message).
+    :param (namedtuple) r_addr: Remote client address.
+    :param (namedtuple) l_addr: Local client address.
     :return (dict) : Dict with response body.
     """
-    socket_info = request.get('address')
-    remote_socket_info = socket_info.get('remote')
-    local_socket_info = socket_info.get('local')
+    if not r_addr:
+        r_addr = get_socket_info_from_request(request, 'remote')
+    if not l_addr:
+        l_addr = get_socket_info_from_request(request, 'local')
 
     return {
         'action': request.get('action'),
@@ -30,12 +34,21 @@ def make_response(request, code, data=None):
         'code': code,
         'address': {
             'remote': {
-                'addr': remote_socket_info.get('addr'),
-                'port': remote_socket_info.get('port'),
+                'addr': r_addr.addr,
+                'port': r_addr.port,
             },
             'local': {
-                'addr': local_socket_info.get('addr'),
-                'port': local_socket_info.get('port'),
+                'addr': l_addr.addr,
+                'port': l_addr.port,
             },
         },
     }
+
+
+def get_socket_info_from_request(request, addr_type):
+    socket_info = request.get('address')
+
+    type_socket_info = socket_info.get(addr_type)
+    addr, port = type_socket_info.get('addr'), type_socket_info.get('port')
+
+    return get_socket_info(addr, port)
