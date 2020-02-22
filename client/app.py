@@ -1,6 +1,7 @@
 """Client side of Messenger app."""
 import json
 import zlib
+from collections import namedtuple
 from time import sleep
 from logging import getLogger
 from logging.config import dictConfig
@@ -12,6 +13,7 @@ from protocol import is_response_valid, make_request
 from decorators import log
 from descriptors import PortValidator, HostValidator, BufsizeValidator
 from metaclasses import ClientVerifier
+from utils import make_presence_message
 
 
 class Client(metaclass=ClientVerifier):
@@ -33,6 +35,9 @@ class Client(metaclass=ClientVerifier):
         self.port = port
         self.name = name
         self.socket = None
+        self._token = None
+        self._r_addr = None
+        self._l_addr = None
 
         dictConfig(LOGGING)
         self.logger = getLogger('client')
@@ -61,17 +66,16 @@ class Client(metaclass=ClientVerifier):
         """Connect to server with host and port attributes."""
         try:
             self.socket.connect((self.host, self.port))
-            self._send_identify_message()
+            self._set_socket_info()
+            make_presence_message(self.socket, self._r_addr, self._l_addr, self.name)
             self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
         except (ConnectionResetError, ConnectionError, ConnectionAbortedError) as error:
             self.logger.critical(f'Connection closed. Error: {error}.')
 
-    def _send_identify_message(self):
-        """Send presence message for identify client on the server side."""
-        data = {'text': None, 'to_user': self.name}
-        request = make_request('presence', data, self.name)
-        bytes_request = json.dumps(request).encode('UTF-8')
-        self.socket.send(zlib.compress(bytes_request))
+    def _set_socket_info(self):
+        Socket_info = namedtuple('Socket_info', ['addr', 'port'])
+        self._r_addr = Socket_info(*self.socket.getsockname())
+        self._l_addr = Socket_info(self.host, self.port)
 
     def write(self):
         """Start writer thread for sending requests to server."""
@@ -94,15 +98,19 @@ class Client(metaclass=ClientVerifier):
         """Get request to server.
         :return (dict): Dict with request body.
         """
-        action = 'echo'
-        text = input('message: ')
-        to_user = input('to user: ')
+        action = input('enter action: ')
+        data = input('enter data: ')
 
-        if not to_user:
-            to_user = self.name
+        if not self._r_addr and not self._l_addr:
+            self._set_socket_info()
 
-        data = {'text': text, 'to_user': to_user}
-        return make_request(action, data, self.name)
+        return make_request(
+            action=action,
+            data=data,
+            r_addr=self._r_addr,
+            l_addr=self._l_addr,
+            token=self._token
+        )
 
     def read(self):
         """Start reader thread for reading responses from server."""
@@ -130,7 +138,16 @@ class Client(metaclass=ClientVerifier):
         bytes_response = zlib.decompress(self.socket.recv(self.bufsize))
         response = json.loads(bytes_response.decode('UTF-8'))
         if is_response_valid(response):
+            self._set_token(response)
             return response
+
+    def _set_token(self, response):
+        if not self._token:
+            data = response.get('data')
+            if isinstance(data, dict):
+                token = data.get('token')
+                if token:
+                    self._token = token
 
     @staticmethod
     def print_message(response):
@@ -145,13 +162,13 @@ class Client(metaclass=ClientVerifier):
         print(f'\nYou got message:\n{message}\n')
 
     @staticmethod
-    def check_threads_health():
+    def check_threads_health():    # TODO: выглядит костыльно, переделать
         """Reader and writer threads health checking."""
         current_th_names = [thread.name for thread in enumerate()]
         th_names = ('reader', 'writer')
 
         while True:
-            sleep(1)
+            sleep(1)    # TODO: выглядит костыльно, переделать
             if all(th_name in current_th_names for th_name in th_names):
                 continue
             break

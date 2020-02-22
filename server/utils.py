@@ -8,7 +8,7 @@ def parse_args(*args):
     :param (Tuple) args: Tuple with arguments for parser.
     :return (argparse.Namespace): Namespace with added arguments.
     """
-    parser = ArgumentParser(description='Set the server IP address and server listening port.')
+    parser = ArgumentParser(description='Set up server parameters.')
     parser.add_argument(
         '-a', '--address', type=str, default='0.0.0.0',
         required=False, help='Set server IP address'
@@ -16,5 +16,9 @@ def parse_args(*args):
     parser.add_argument(
         '-p', '--port', type=int, default=7777,
         required=False, help='Set server listening port'
+    )
+    parser.add_argument(
+        '-m', '--migrate', action='store_true',
+        required=False, help='Propagate changes into database'
     )
     return parser.parse_args(*args)
