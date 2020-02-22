@@ -12,7 +12,7 @@ while True:
         break
 
     elif ACTION == 's':
-        PROCESS.append(Popen(['python', 'server'], creationflags=CREATE_NEW_CONSOLE))
+        PROCESS.append(Popen(['python', 'server', '-m'], creationflags=CREATE_NEW_CONSOLE))
 
         for i in range(1, 4):
             PROCESS.append(Popen(f'python client -n user_{i}', creationflags=CREATE_NEW_CONSOLE))
