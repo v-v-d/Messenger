@@ -9,7 +9,6 @@ from socket import socket, AF_INET, SOCK_STREAM
 from log.log_config import LOGGING
 from handler import handle_request
 from decorators import log
-from clients_db import add_client_to_db, get_client_from_db, remove_client_from_db
 from metaclasses import ServerVerifier
 from descriptors import HostValidator, PortValidator, BufsizeValidator
 
@@ -89,7 +88,7 @@ class Server(metaclass=ServerVerifier):
             client, address = self.socket.accept()
             self.logger.info(f'Client was connected with {address[0]}:{address[1]}.')
             self._connections.append(client)
-        except Exception:
+        except:
             pass
 
     def _handle_clients(self):
@@ -116,21 +115,19 @@ class Server(metaclass=ServerVerifier):
                 self.get_request(client)
             except (ValueError, json.JSONDecodeError):
                 self.logger.critical('Failed to decode client request.')
-            except Exception:
+            except:
                 self._remove_client(client)
 
     def get_request(self, client):
         """
         Get decoded and decompressed request from client. Add it
-        to requests list. Update CLIENTS_DB with
-        {<username>: <client socket obj>}.
+        to requests list.
         :param (<class 'socket.socket'>) client: Client socket object.
         """
         bytes_request = decompress(client.recv(self.bufsize))
         request = json.loads(bytes_request.decode('UTF-8'))
         self.logger.debug(f'Client send request: {request}')
         self._requests.append(request)
-        add_client_to_db(request, client)
 
     def _remove_client(self, client):
         """
@@ -141,7 +138,6 @@ class Server(metaclass=ServerVerifier):
             host, port = client.getpeername()
             self.logger.info(f'Client {host}:{port} was disconnected.')
             self._connections.remove(client)
-            remove_client_from_db(client)
 
     def _write(self):
         """
@@ -152,14 +148,20 @@ class Server(metaclass=ServerVerifier):
         """
         if self._requests:
             request = self._requests.pop()
-            client = get_client_from_db(request)
 
-            if client in self._w_list:
-                response = handle_request(request)
-                bytes_response = json.dumps(response).encode('UTF-8')
+            if request.get('data'):
+                request['data'] = json.loads(request.get('data'))   # TODO: Убрать после появления GUI
+            remote_socket_info = request.get('address').get('remote')
+            r_addr, r_port = remote_socket_info.get('addr'), remote_socket_info.get('port')
 
-                try:
-                    client.send(compress(bytes_response))
-                    self.logger.debug(f'Server make response: {response}.')
-                except Exception:
-                    self._remove_client(client)
+            response = handle_request(request)
+            if response:
+                for client in self._connections:
+                    if client.getpeername() == (r_addr, r_port):
+                        bytes_response = json.dumps(response).encode('UTF-8')
+                        try:
+                            client.send(compress(bytes_response))
+                            self.logger.debug(f'Server make response: {response}.')
+
+                        except:
+                            self._remove_client(client)

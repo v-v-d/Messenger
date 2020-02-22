@@ -3,7 +3,7 @@ from logging import getLogger
 from logging.config import dictConfig
 
 from app import Server
-from db.utils import migrate_db
+from db.database import migrate_db
 from utils import parse_args
 from log.log_config import LOGGING
 
