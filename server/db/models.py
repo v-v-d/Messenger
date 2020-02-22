@@ -28,7 +28,7 @@ class Client(Base):
     owners = relationship('ClientContact', foreign_keys='ClientContact.friend_id', back_populates='friend_contact')
 
     def __repr__(self):
-        return self.name
+        return f'{self.name} profile'
 
 
 class Message(Base):
@@ -44,7 +44,7 @@ class Message(Base):
     to_client = relationship('Client', foreign_keys=[to_client_id], back_populates='gotten_messages')
 
     def __repr__(self):
-        return self.text
+        return f'Message from {self.from_client} to {self.to_client}'
 
 
 class ClientSession(Base):
@@ -61,6 +61,9 @@ class ClientSession(Base):
     local_port = Column(Integer, nullable=False)
     client_id = Column(Integer, ForeignKey('clients.id'))
     client = relationship('Client', back_populates='sessions')
+
+    def __repr__(self):
+        return f'{self.client} session'
 
 
 class ClientContact(Base):
