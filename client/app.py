@@ -66,9 +66,10 @@ class Client(metaclass=ClientVerifier):
         """Connect to server with host and port attributes."""
         try:
             self.socket.connect((self.host, self.port))
+            self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
+
             self._set_socket_info()
             make_presence_message(self.socket, self._r_addr, self._l_addr, self.name)
-            self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
         except (ConnectionResetError, ConnectionError, ConnectionAbortedError) as error:
             self.logger.critical(f'Connection closed. Error: {error}.')
 
