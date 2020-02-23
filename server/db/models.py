@@ -36,6 +36,7 @@ class Message(Base):
     __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    edited = Column(Boolean, default=False)
     text = Column(String, nullable=False)
     created = Column(DateTime, nullable=False)
     from_client_id = Column(Integer, ForeignKey('clients.id'))
