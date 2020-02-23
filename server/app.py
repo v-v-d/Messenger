@@ -148,10 +148,6 @@ class Server(metaclass=ServerVerifier):
         """
         if self._requests:
             request = self._requests.pop()
-
-            if request.get('data'):
-                request['data'] = json.loads(request.get('data'))   # TODO: Убрать после появления GUI
-
             response = handle_request(request)
 
             if response:

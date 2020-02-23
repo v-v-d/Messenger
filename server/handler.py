@@ -1,4 +1,5 @@
 """Handler for server side of Messenger app."""
+import json
 from logging import getLogger
 from logging.config import dictConfig
 
@@ -17,6 +18,9 @@ def handle_request(request):
     :return (dict) : Dict with response body.
     """
     if is_request_valid(request):
+        if request.get('data'):
+            request['data'] = json.loads(request.get('data'))  # TODO: Убрать после появления GUI
+
         action = request.get('action')
         controller = get_controller(action)
         if controller:
@@ -30,7 +34,7 @@ def handle_request(request):
             response = make_response(request, 404, f'Action "{action}" not supported.')
             LOGGER.error(f'Controller {action} not found.')
     else:
-        response = make_response(request, 400, 'Bad request.')
-        LOGGER.error(f'Bad request: {request}')
+        response = make_response(request, 400, 'Bad request format.')
+        LOGGER.error(f'Bad request format: {request}')
 
     return response
