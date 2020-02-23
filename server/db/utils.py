@@ -6,8 +6,9 @@ from db.settings import SECRET_KEY
 
 
 def get_validation_errors(request, *attrs):
+    data = request.get('data')
     errs = {}
-    [errs.update({attr: 'Attribute is required'}) for attr in attrs if attr not in request]
+    [errs.update({attr: 'Attribute is required!'}) for attr in attrs if attr not in data]
     return errs
 
 
