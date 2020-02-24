@@ -1,3 +1,4 @@
+"""Controllers for server side of Messenger app."""
 from datetime import datetime
 
 from sqlalchemy.exc import IntegrityError
