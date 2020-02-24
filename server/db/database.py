@@ -9,7 +9,7 @@ Session = sessionmaker(bind=ENGINE)
 
 
 def migrate_db():
-    """Propagate changes you make to your models into your database schema."""
+    """Propagate changes made to models into database schema."""
     Base.metadata.create_all(ENGINE)
 
 
