@@ -17,6 +17,11 @@ def is_request_valid(request):
 
 
 def is_data_format_valid(data):
+    """
+    Validation request data filed format.
+    :param (any) data: Request data filed body.
+    :return (bool) : True if request data filed format valid, False otherwise.
+    """
     if data:
         try:
             json.loads(data)
@@ -60,6 +65,12 @@ def make_response(request, code, data=None, r_addr=None, l_addr=None):
 
 
 def get_socket_info_from_request(request, addr_type):
+    """
+    Get client address and port pair from request.
+    :param (dict) request: Dict from client with request body.
+    :param (str) addr_type: Client address type (remote or local).
+    :return (namedtuple) : Client address and port pair.
+    """
     socket_info = request.get('address')
 
     type_socket_info = socket_info.get(addr_type)
