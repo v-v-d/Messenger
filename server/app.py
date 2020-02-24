@@ -151,15 +151,38 @@ class Server(metaclass=ServerVerifier):
             response = handle_request(request)
 
             if response:
-                remote_socket_info = self._get_remote_socket_info(response)
-                for client in self._connections:
-                    if client.getpeername() == remote_socket_info:
-                        self._write_to_current_client(response, client)
+                sender_addr = self._get_remote_socket_info(request)
+                receiver_addr = self._get_remote_socket_info(response)
+
+                if sender_addr == receiver_addr:
+                    self._write_to_sender(sender_addr, response)
+                else:
+                    self._write_to_sender_and_receiver(sender_addr, receiver_addr, response)
 
     @staticmethod
-    def _get_remote_socket_info(response):
-        remote_socket_info = response.get('address').get('remote')
+    def _get_remote_socket_info(protocol_object):
+        remote_socket_info = protocol_object.get('address').get('remote')
         return remote_socket_info.get('addr'), remote_socket_info.get('port')
+
+    def _write_to_sender(self, sender_addr, response):
+        for client in self._connections:
+            if client.getpeername() == sender_addr:
+                self._write_to_current_client(response, client)
+                break
+
+    def _write_to_sender_and_receiver(self, sender_addr, receiver_addr, response):
+        is_sent_to_sender = False
+        is_sent_to_receiver = False
+        for client in self._connections:
+            if client.getpeername() == sender_addr:
+                self._write_to_current_client(response, client)
+                is_sent_to_sender = True
+            elif client.getpeername() == receiver_addr:
+                self._write_to_current_client(response, client)
+                is_sent_to_receiver = True
+
+            if is_sent_to_sender and is_sent_to_receiver:
+                break
 
     def _write_to_current_client(self, response, client):
         bytes_response = json.dumps(response).encode('UTF-8')
