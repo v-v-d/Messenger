@@ -1,4 +1,4 @@
-"""Handler for server side of Messenger app."""
+"""Request handler for server side of Messenger app."""
 import json
 from logging import getLogger
 from logging.config import dictConfig
