@@ -1,7 +1,6 @@
 """Server side database settings for Messenger app."""
 import os
 
-import settings
 from utils import PARSER
 
 BASE_DIR = os.path.dirname(__file__)
