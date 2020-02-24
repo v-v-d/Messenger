@@ -24,11 +24,10 @@ def register_controller(request):
             session.add(client)
 
         token = login(request, client)
-        data = {'text': 'Register done! Now you are logging in.', 'token': token}
-        return make_response(request, 200, data)
+        return make_response(request, 200, {'token': token})
 
     except IntegrityError:
-        data = {'text': f'Client with name {client_login} already exists.'}
+        data = f'Client with name {client_login} already exists.'
         return make_response(request, 400, data)
 
 
@@ -44,14 +43,13 @@ def login_controller(request):
 
         if client:
             token = login(request, client)
-            data = {'text': 'Login done!', 'token': token}
-            return make_response(request, 200, data)
+            return make_response(request, 200, {'token': token})
         else:
-            data = {'text': 'Enter correct login or password.'}
+            data = 'Enter correct login or password.'
             return make_response(request, 400, data)
 
     except ValueError:
-        data = {'text': 'Client already logged in.'}
+        data = 'Client already logged in.'
         return make_response(request, 403, data)
 
 
@@ -60,10 +58,10 @@ def logout_controller(request):
         client_session = session.query(ClientSession).filter_by(token=request.get('token')).first()
         if client_session:
             client_session.closed = datetime.now()
-            data = {'text': 'Client session closed.'}
+            data = 'Client session closed.'
             return make_response(request, 200, data)
         else:
-            data = {'text': 'Client session not found.'}
+            data = 'Client session not found.'
             return make_response(request, 404, data)
 
 
@@ -111,11 +109,14 @@ def message_controller(request):
             )
             session.add(message)
 
-            data = {'text': text, 'from': from_client.name, 'time': request.get('time')}
+            data = {
+                'text': text, 'to_client': to_client_session.client.name,
+                'from_client': from_client.name, 'time': request.get('time')
+            }
             return make_response(request, 200, data, r_addr)
 
         except AttributeError:
-            data = {'text': f'Client with id #{to_client_id} not found.'}
+            data = f'Client with id #{to_client_id} not found.'
             return make_response(request, 404, data)
 
 
@@ -135,11 +136,11 @@ def get_messages_controller(request):
                 if msg.created >= datetime.fromtimestamp(float(data.get('from_date')))
             ]
             session.expunge_all()
-            data = {'text': 'Success!', 'messages': filtered_messages}
+            data = {'messages': filtered_messages}
             return make_response(request, 200, data)
 
         except AttributeError:
-            data = {'text': 'Client not found.'}
+            data = 'Client not found.'
             return make_response(request, 404, data)
 
 
@@ -158,12 +159,12 @@ def upd_message_controller(request):
 
         if message:
             message.text = new_text
-            message.is_edited = True
-            data = {'text': 'Success updating!', 'new_text': new_text}
+            message.edited = True
+            data = {'message_id': message_id, 'new_text': new_text}
             return make_response(request, 200, data)
 
         else:
-            data = {'text': f'Message with id #{message_id} not found.'}
+            data = f'Message with id #{message_id} not found.'
             return make_response(request, 404, data)
 
 
@@ -181,11 +182,11 @@ def del_message_controller(request):
 
         if message:
             session.delete(message)
-            data = {'text': 'Success deleting!'}
+            data = {'message_id': message_id}
             return make_response(request, 200, data)
 
         else:
-            data = {'text': f'Message with id #{message_id} not found.'}
+            data = f'Message with id #{message_id} not found.'
             return make_response(request, 404, data)
 
 
@@ -202,14 +203,23 @@ def add_contact_controller(request):
         friend = session.query(Client).filter_by(id=friend_id).first()
 
         if client and friend:
+            if client.id == friend_id:
+                data = 'You can\'t add yourself in your own friend list.'
+                return make_response(request, 400, data)
+
+            for existing_contact in client.friends:
+                if existing_contact.friend_contact == friend:
+                    data = f'{friend.name} already in friend list.'
+                    return make_response(request, 400, data)
+
             contact = ClientContact(owner_id=client.id, friend_id=friend_id)
             session.add(contact)
 
-            data = {'text': 'Success contact adding!'}
+            data = {'friend_id': friend_id, 'friend_name': friend.name}
             return make_response(request, 200, data)
 
         else:
-            data = {'text': 'Client not found.'}
+            data = 'Client not found.'
             return make_response(request, 404, data)
 
 
@@ -217,7 +227,7 @@ def get_contacts_controller(request):
     with session_scope() as session:
         contacts = session.query(ClientSession).filter_by(token=request.get('token')).first().client.friends
 
-        data = {'text': 'Success contacts reading!', 'contacts': contacts}
+        data = {'contacts': contacts}
         return make_response(request, 200, data)
 
 
@@ -236,8 +246,8 @@ def del_contact_controller(request):
             if friend_contact.friend_id == friend_id:
                 session.delete(friend_contact)
 
-                data = {'text': 'Success contact deleting!'}
+                data = {'friend_id': friend_id}
                 return make_response(request, 200, data)
 
-        data = {'text': 'Client not found in friend list.'}
+        data = 'Client not found in friend list.'
         return make_response(request, 404, data)
