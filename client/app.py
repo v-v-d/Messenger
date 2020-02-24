@@ -8,6 +8,7 @@ from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread, enumerate
 
+from handler import handle_response
 from log.log_config import LOGGING
 from protocol import is_response_valid, make_request
 from decorators import log
@@ -123,7 +124,9 @@ class Client(metaclass=ClientVerifier):
             try:
                 response = self.get_response()
                 self.logger.debug(f'Client got response: {response}.')
-                self.print_message(response)
+                result = handle_response(response)
+                if result:
+                    self._set_token(result)
 
             except (ValueError, json.JSONDecodeError):
                 self.logger.critical('Failed to decode server response.')
@@ -139,28 +142,11 @@ class Client(metaclass=ClientVerifier):
         bytes_response = zlib.decompress(self.socket.recv(self.bufsize))
         response = json.loads(bytes_response.decode('UTF-8'))
         if is_response_valid(response):
-            self._set_token(response)
             return response
 
-    def _set_token(self, response):
+    def _set_token(self, token):
         if not self._token:
-            data = response.get('data')
-            if isinstance(data, dict):
-                token = data.get('token')
-                if token:
-                    self._token = token
-
-    @staticmethod
-    def print_message(response):
-        """
-        Print message from user or error message from server.
-        :param (dict) response: Dict with response body.
-        """
-        code = response.get('code')
-        data = response.get('data')
-        message = data if code is 200 else f'{code}: {data}'
-
-        print(f'\nYou got message:\n{message}\n')
+            self._token = token
 
     @staticmethod
     def check_threads_health():    # TODO: выглядит костыльно, переделать
