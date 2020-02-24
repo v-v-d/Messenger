@@ -1,4 +1,5 @@
 """Protocol for client side of Messenger app."""
+import json
 from time import time
 
 
@@ -12,6 +13,33 @@ def is_response_valid(response):
     if all(key in response for key in valid_keys):
         return True
     raise ValueError
+
+
+def is_request_valid(request):
+    """
+    Check for valid keys in request.
+    :param (dict) request: Dict from client with request body.
+    :return (bool) : True if all valid keys in request, False otherwise.
+    """
+    valid_keys = ('action', 'time', 'data', 'token', 'address')
+    is_keys_valid = all(key in request for key in valid_keys)
+
+    return is_keys_valid and is_data_format_valid(request.get('data'))
+
+
+def is_data_format_valid(data):
+    """
+    Validation request data filed format.
+    :param (any) data: Request data filed body.
+    :return (bool) : True if request data filed format valid, False otherwise.
+    """
+    if data:
+        try:
+            json.loads(data)
+            return True
+        except json.JSONDecodeError:
+            return False
+    return True
 
 
 def make_request(action, data, r_addr, l_addr, token=None):

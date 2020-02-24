@@ -8,7 +8,7 @@ from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread, enumerate
 
-from handler import handle_response
+from handlers import handle_response, handle_local_request
 from log.log_config import LOGGING
 from protocol import is_response_valid, make_request
 from decorators import log
@@ -88,9 +88,11 @@ class Client(metaclass=ClientVerifier):
         while True:
             try:
                 request = self.get_request()
-                bytes_request = json.dumps(request).encode('UTF-8')
-                self.socket.send(zlib.compress(bytes_request))
-                self.logger.debug(f'Client send request {request}.')
+
+                if not handle_local_request(request):
+                    bytes_request = json.dumps(request).encode('UTF-8')
+                    self.socket.send(zlib.compress(bytes_request))
+                    self.logger.debug(f'Client send request {request}.')
 
             except Exception as error:
                 self.logger.critical(f'Can\'t send request. Error: {error}')

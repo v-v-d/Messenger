@@ -1,3 +1,4 @@
+"""Controllers for client side of Messenger app."""
 from datetime import datetime
 
 from db.database import session_scope
@@ -70,10 +71,6 @@ def upd_message_controller(response):
                 message.edited = True
 
 
-def get_messages_controller(response):
-    pass
-
-
 def del_message_controller(response):
     if response.get('code') == 200:
         message_id = response.get('data').get('message_id')
@@ -94,10 +91,6 @@ def add_contact_controller(response):
         with session_scope() as session:
             contact = ClientContact(friend=friend_name, friend_id=friend_id)
             session.add(contact)
-
-
-def get_contacts_controller(response):
-    pass
 
 
 def del_contact_controller(response):
