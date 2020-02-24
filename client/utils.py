@@ -25,7 +25,15 @@ def parse_args(*args):
         '-n', '--name', type=str, default='Guest',
         required=False, help='Set username'
     )
+    parser.add_argument(
+        '-m', '--migrate', action='store_true',
+        required=False, help='Propagate changes into database'
+    )
+
     return parser.parse_args(*args)
+
+
+PARSER = parse_args()
 
 
 def make_presence_message(socket, r_addr, l_addr, client_name):
