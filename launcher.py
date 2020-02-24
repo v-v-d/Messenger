@@ -25,7 +25,10 @@ def start_clients():
     clients_qty = int(input('How many clients you want to start: '))
 
     for i in range(clients_qty):
-        PROCESSES.append(Popen(f'python client -n user_{i}', creationflags=CREATE_NEW_CONSOLE))
+        PROCESSES.append(Popen(
+            ['py', '-3', 'client', '-n', f'client_{i}', '-m'],
+            creationflags=CREATE_NEW_CONSOLE)
+        )
 
 
 def kill_processes():
