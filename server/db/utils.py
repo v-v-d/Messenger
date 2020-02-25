@@ -12,22 +12,14 @@ def get_validation_errors(request, *attrs):
     return errs
 
 
-def get_message(request, messages):
-    request_data = request.get('data')
-    message_id = request_data.get('message_id')
-    for msg in messages:    # TODO: Оптимизировать поиск
-        if msg.id == message_id:
-            return msg
-
-
 def authenticate(login, password):
     with session_scope() as session:
         client = session.query(Client).filter_by(name=login).first()
 
         if client and password == client.password:
-            for client_session in client.sessions:
-                if not client_session.closed:
-                    raise ValueError
+            active_session = client.sessions.filter_by(closed=None).first()
+            if active_session:
+                raise ValueError
             return client
 
 
@@ -52,3 +44,13 @@ def login(request, client):
         )
         session.add(client_session)
         return token
+
+
+def get_active_sessions():
+    with session_scope() as session:
+        return session.query(ClientSession).filter_by(closed=None).all()
+
+
+def get_clients():
+    with session_scope() as session:
+        return session.query(Client).all()

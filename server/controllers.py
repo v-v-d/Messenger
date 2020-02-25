@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from db.models import Client, Message, ClientSession, ClientContact
 from db.database import session_scope
-from db.utils import get_message, login, authenticate, get_validation_errors
+from db.utils import login, authenticate, get_validation_errors
 from protocol import make_response
 from utils import get_socket_info
 
@@ -73,10 +73,10 @@ def presence_controller(request):
     with session_scope() as session:
         client = session.query(Client).filter_by(name=client_name).first()
         if client:
-            for client_session in client.sessions:
-                if not client_session.closed:
-                    client_session.closed = datetime.now()
-                    is_active_session = True
+            active_session = client.sessions.filter_by(closed=None).first()
+            if active_session:
+                active_session.closed = datetime.now()
+                is_active_session = True
 
     token = None
     if is_active_session:
@@ -121,24 +121,39 @@ def message_controller(request):
             return make_response(request, 404, data)
 
 
-def get_messages_controller(request):
+def get_messages_controller(request):   # TODO: реализован на клиенте, удалить
     errors = get_validation_errors(request, 'from_date')
     if errors:
         return make_response(request, 400, {'errors': errors})
 
     data = request.get('data')
+    from_date = datetime.fromtimestamp(data.get('from_date'))
 
     with session_scope() as session:
         try:
-            messages = session.query(ClientSession).filter_by(token=request.get('token')).first().client.gotten_messages
-            filtered_messages = [
-                {'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name, 'date': msg.created.timestamp()}
-                for msg in messages
-                if msg.created >= datetime.fromtimestamp(float(data.get('from_date')))
-            ]
-            session.expunge_all()
-            data = {'messages': filtered_messages}
-            return make_response(request, 200, data)
+            client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
+            if client:
+                filtered_sent_messages = client.sent_messages.filter_by(Message.created >= from_date).all()
+                sent_messages = [
+                    {
+                        'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
+                        'to_client': msg.to_client.name, 'date': msg.created.timestamp()
+                    }
+                    for msg in filtered_sent_messages
+                ]
+
+                filtered_gotten_messages = client.gotten_messages.filter_by(Message.created >= from_date).all()
+                gotten_messages = [
+                    {
+                        'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
+                        'to_client': msg.to_client.name, 'date': msg.created.timestamp()
+                    }
+                    for msg in filtered_gotten_messages
+                ]
+
+                session.expunge_all()
+                data = {'messages': sent_messages + gotten_messages}
+                return make_response(request, 200, data)
 
         except AttributeError:
             data = 'Client not found.'
@@ -156,7 +171,7 @@ def upd_message_controller(request):
 
     with session_scope() as session:
         messages = session.query(ClientSession).filter_by(token=request.get('token')).first().client.sent_messages
-        message = get_message(request, messages)
+        message = messages.filter_by(id=message_id).first()
 
         if message:
             message.text = new_text
@@ -179,7 +194,7 @@ def del_message_controller(request):
 
     with session_scope() as session:
         messages = session.query(ClientSession).filter_by(token=request.get('token')).first().client.sent_messages
-        message = get_message(request, messages)
+        message = messages.filter_by(id=message_id).first()
 
         if message:
             session.delete(message)
@@ -208,10 +223,10 @@ def add_contact_controller(request):
                 data = 'You can\'t add yourself in your own friend list.'
                 return make_response(request, 400, data)
 
-            for existing_contact in client.friends:
-                if existing_contact.friend_contact == friend:
-                    data = f'{friend.name} already in friend list.'
-                    return make_response(request, 400, data)
+            existing_friend = client.friends.filter_by(friend_id=friend_id).first()
+            if existing_friend:
+                data = f'{friend.name} already in friend list.'
+                return make_response(request, 400, data)
 
             contact = ClientContact(owner_id=client.id, friend_id=friend_id)
             session.add(contact)
@@ -224,9 +239,9 @@ def add_contact_controller(request):
             return make_response(request, 404, data)
 
 
-def get_contacts_controller(request):
+def get_contacts_controller(request):   # TODO: реализован на клиенте, удалить
     with session_scope() as session:
-        contacts = session.query(ClientSession).filter_by(token=request.get('token')).first().client.friends
+        contacts = session.query(ClientSession).filter_by(token=request.get('token')).first().client.friends.all()
 
         data = {'contacts': contacts}
         return make_response(request, 200, data)
@@ -243,12 +258,12 @@ def del_contact_controller(request):
     with session_scope() as session:
         client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
 
-        for friend_contact in client.friends:
-            if friend_contact.friend_id == friend_id:
-                session.delete(friend_contact)
+        existing_friend = client.friends.filter_by(friend_id=friend_id).first()
+        if existing_friend:
+            session.delete(existing_friend)
 
-                data = {'friend_id': friend_id}
-                return make_response(request, 200, data)
+            data = {'friend_id': friend_id}
+            return make_response(request, 200, data)
 
         data = 'Client not found in friend list.'
         return make_response(request, 404, data)

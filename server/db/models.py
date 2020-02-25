@@ -21,11 +21,11 @@ class Client(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    sent_messages = relationship('Message', foreign_keys='Message.from_client_id', back_populates='from_client')
-    gotten_messages = relationship('Message', foreign_keys='Message.to_client_id', back_populates='to_client')
-    sessions = relationship('ClientSession', back_populates='client')
-    friends = relationship('ClientContact', foreign_keys='ClientContact.owner_id', back_populates='owner_contact')
-    owners = relationship('ClientContact', foreign_keys='ClientContact.friend_id', back_populates='friend_contact')
+    sent_messages = relationship('Message', lazy='dynamic', foreign_keys='Message.from_client_id', back_populates='from_client')
+    gotten_messages = relationship('Message', lazy='dynamic', foreign_keys='Message.to_client_id', back_populates='to_client')
+    sessions = relationship('ClientSession', lazy='dynamic', back_populates='client')
+    friends = relationship('ClientContact', lazy='dynamic', foreign_keys='ClientContact.owner_id', back_populates='owner_contact')
+    owners = relationship('ClientContact', lazy='dynamic', foreign_keys='ClientContact.friend_id', back_populates='friend_contact')
 
     def __repr__(self):
         return f'{self.name} profile'
