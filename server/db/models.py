@@ -26,6 +26,7 @@ class Client(Base):
     sessions = relationship('ClientSession', lazy='dynamic', back_populates='client')
     friends = relationship('ClientContact', lazy='dynamic', foreign_keys='ClientContact.owner_id', back_populates='owner_contact')
     owners = relationship('ClientContact', lazy='dynamic', foreign_keys='ClientContact.friend_id', back_populates='friend_contact')
+    entry_in_active = relationship('ActiveClient', lazy='dynamic', back_populates='client')
 
     def __repr__(self):
         return f'{self.name} profile'
@@ -80,3 +81,19 @@ class ClientContact(Base):
 
     def __repr__(self):
         return f'{self.owner_contact} contact list'
+
+
+class ActiveClient(Base):
+    """Active client model."""
+    __tablename__ = 'active_clients'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey('clients.id'))
+    client_name = Column(String, nullable=False)
+    addr = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
+    created = Column(DateTime, default=datetime.now())
+    client = relationship('Client', back_populates='entry_in_active')
+
+    def __repr__(self):
+        return f'{self.client} in active clients'
