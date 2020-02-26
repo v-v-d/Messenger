@@ -2,6 +2,7 @@
 import json
 import zlib
 from argparse import ArgumentParser
+from collections import namedtuple
 
 from protocol import make_request
 
@@ -47,3 +48,8 @@ def make_presence_message(socket, r_addr, l_addr, client_name):
     )
     bytes_request = json.dumps(request).encode('UTF-8')
     socket.send(zlib.compress(bytes_request))
+
+
+def set_socket_info(addr, port):
+    Socket_info = namedtuple('Socket_info', ['addr', 'port'])
+    return Socket_info(addr, port)

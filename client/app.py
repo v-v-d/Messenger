@@ -1,7 +1,6 @@
 """Client side of Messenger app."""
 import json
 import zlib
-from collections import namedtuple
 from time import sleep
 from logging import getLogger
 from logging.config import dictConfig
@@ -14,7 +13,7 @@ from protocol import is_response_valid, make_request
 from decorators import log
 from descriptors import PortValidator, HostValidator, BufsizeValidator
 from metaclasses import ClientVerifier
-from utils import make_presence_message
+from utils import make_presence_message, set_socket_info
 
 
 class Client(metaclass=ClientVerifier):
@@ -51,7 +50,7 @@ class Client(metaclass=ClientVerifier):
     def __exit__(self, exc_type, exc_val, exc_tb):
         message = 'Client shutdown.'
         if exc_type and exc_type is not KeyboardInterrupt:
-            message = f'Client stopped with error: {exc_val}'
+            message = f'Client stopped with error: {exc_type}: {exc_val}'
         self.logger.info(message)
         return True
 
@@ -69,15 +68,14 @@ class Client(metaclass=ClientVerifier):
             self.socket.connect((self.host, self.port))
             self.logger.info(f'Client connected to server with {self.host}:{self.port}.')
 
-            self._set_socket_info()
+            self._set_addresses()
             make_presence_message(self.socket, self._r_addr, self._l_addr, self.name)
         except (ConnectionResetError, ConnectionError, ConnectionAbortedError) as error:
             self.logger.critical(f'Connection closed. Error: {error}.')
 
-    def _set_socket_info(self):
-        Socket_info = namedtuple('Socket_info', ['addr', 'port'])
-        self._r_addr = Socket_info(*self.socket.getsockname())
-        self._l_addr = Socket_info(self.host, self.port)
+    def _set_addresses(self):
+        self._r_addr = set_socket_info(*self.socket.getsockname())
+        self._l_addr = set_socket_info(self.host, self.port)
 
     def write(self):
         """Start writer thread for sending requests to server."""
@@ -105,9 +103,6 @@ class Client(metaclass=ClientVerifier):
         action = input('enter action: ')
         data = input('enter data: ')
 
-        if not self._r_addr and not self._l_addr:
-            self._set_socket_info()
-
         return make_request(
             action=action,
             data=data,
@@ -126,9 +121,9 @@ class Client(metaclass=ClientVerifier):
             try:
                 response = self.get_response()
                 self.logger.debug(f'Client got response: {response}.')
-                result = handle_response(response)
-                if result:
-                    self._set_token(result)
+                data = handle_response(response)
+                if data:
+                    self._set_token(data)
 
             except (ValueError, json.JSONDecodeError):
                 self.logger.critical('Failed to decode server response.')
@@ -146,8 +141,9 @@ class Client(metaclass=ClientVerifier):
         if is_response_valid(response):
             return response
 
-    def _set_token(self, token):
-        if not self._token:
+    def _set_token(self, data):
+        token = data.get('token')
+        if token and not self._token:
             self._token = token
 
     @staticmethod

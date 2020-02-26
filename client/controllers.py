@@ -29,7 +29,7 @@ def add_session_controller(response):
                 )
                 session.add(client_session)
 
-                return token
+                return data
 
 
 def close_session_controller(response):
