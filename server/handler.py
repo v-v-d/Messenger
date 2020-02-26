@@ -29,7 +29,7 @@ def handle_request(request):
                 LOGGER.debug(f'Controller {action} resolved with request: {request}')
             except Exception as error:
                 response = make_response(request, 500, 'Internal server error.')
-                LOGGER.critical(f'Controller {action} rejected. Error: {error}')
+                LOGGER.critical(f'Controller {action} rejected. Error: {error.__class__}: {error}')
         else:
             response = make_response(request, 404, f'Action "{action}" not supported.')
             LOGGER.error(f'Controller {action} not found.')
