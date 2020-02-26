@@ -25,3 +25,18 @@ def session_scope():
         raise
     finally:
         session.close()
+
+
+@contextmanager
+def no_expire_session_scope():
+    """Database connection context manager with no expire on commit."""
+    session = Session()
+    session.expire_on_commit = False
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
