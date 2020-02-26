@@ -1,7 +1,10 @@
 import hashlib
+from datetime import datetime
 
-from db.database import session_scope
-from db.models import ClientSession, Client
+from sqlalchemy import and_
+
+from db.database import session_scope, no_expire_session_scope
+from db.models import ClientSession, Client, ActiveClient
 from db.settings import SECRET_KEY
 
 
@@ -24,7 +27,7 @@ def authenticate(login, password):
 
 
 def login(request, client):
-    with session_scope() as session:
+    with no_expire_session_scope() as session:
         hash_obj = hashlib.sha256()
         hash_obj.update(SECRET_KEY.encode('UTF-8'))
         hash_obj.update(str(request.get('time')).encode('UTF-8'))
@@ -54,3 +57,30 @@ def get_active_sessions():
 def get_clients():
     with session_scope() as session:
         return session.query(Client).all()
+
+
+def add_client_to_active_list(request, client):
+    client_address = request.get('address').get('remote')
+    addr = client_address.get('addr')
+    port = client_address.get('port')
+    created = datetime.fromtimestamp(request.get('time'))
+
+    with session_scope() as session:
+        if client:
+            active_client = ActiveClient(
+                client_id=client.id,
+                client_name=client.name,
+                addr=addr, port=port,
+                created=created
+            )
+            session.add(active_client)
+
+
+def remove_from_active_clients(addr, port):
+    with session_scope() as session:
+        active_connection = session.query(ActiveClient).filter(
+            and_(ActiveClient.addr == addr, ActiveClient.port == port)
+        ).first()
+
+        if active_connection:
+            session.delete(active_connection)
