@@ -4,8 +4,8 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
 from db.models import Client, Message, ClientSession, ClientContact
-from db.database import session_scope
-from db.utils import login, authenticate, get_validation_errors
+from db.database import session_scope, no_expire_session_scope
+from db.utils import login, authenticate, get_validation_errors, add_client_to_active_list, remove_from_active_clients
 from protocol import make_response
 from utils import get_socket_info
 
@@ -25,6 +25,7 @@ def register_controller(request):
             session.add(client)
 
         token = login(request, client)
+        add_client_to_active_list(request, client)
         return make_response(request, 200, {'token': token})
 
     except IntegrityError:
@@ -44,6 +45,7 @@ def login_controller(request):
 
         if client:
             token = login(request, client)
+            add_client_to_active_list(request, client)
             return make_response(request, 200, {'token': token})
         else:
             data = 'Enter correct login or password.'
@@ -55,15 +57,21 @@ def login_controller(request):
 
 
 def logout_controller(request):
-    with session_scope() as session:
+    with no_expire_session_scope() as session:
         client_session = session.query(ClientSession).filter_by(token=request.get('token')).first()
         if client_session:
             client_session.closed = datetime.now()
             data = 'Client session closed.'
-            return make_response(request, 200, data)
+            code = 200
         else:
             data = 'Client session not found.'
-            return make_response(request, 404, data)
+            code = 404
+
+    if client_session:
+        addr, port = client_session.remote_addr, client_session.remote_port
+        remove_from_active_clients(addr, port)
+
+    return make_response(request, code, data)
 
 
 def presence_controller(request):
@@ -74,13 +82,20 @@ def presence_controller(request):
         client = session.query(Client).filter_by(name=client_name).first()
         if client:
             active_session = client.sessions.filter_by(closed=None).first()
+
             if active_session:
-                active_session.closed = datetime.now()
-                is_active_session = True
+                last_addr = active_session.remote_addr
+                current_addr = request.get('address').get('remote').get('addr')
+
+                if last_addr == current_addr:
+                    active_session.closed = datetime.now()
+                    is_active_session = True
 
     token = None
     if is_active_session:
         token = login(request, client)
+        add_client_to_active_list(request, client)
+
     return make_response(request, 200, {'token': token})
 
 
@@ -134,8 +149,7 @@ def get_messages_controller(request):   # TODO: реализован на кли
             client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
             if client:
                 filtered_sent_messages = client.sent_messages.filter_by(Message.created >= from_date).all()
-                sent_messages = [
-                    {
+                sent_messages = [{
                         'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
                         'to_client': msg.to_client.name, 'date': msg.created.timestamp()
                     }
@@ -143,8 +157,7 @@ def get_messages_controller(request):   # TODO: реализован на кли
                 ]
 
                 filtered_gotten_messages = client.gotten_messages.filter_by(Message.created >= from_date).all()
-                gotten_messages = [
-                    {
+                gotten_messages = [{
                         'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
                         'to_client': msg.to_client.name, 'date': msg.created.timestamp()
                     }
