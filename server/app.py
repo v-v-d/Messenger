@@ -6,6 +6,7 @@ from logging import getLogger
 from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
+from db.utils import remove_from_active_clients
 from log.log_config import LOGGING
 from handler import handle_request
 from decorators import log
@@ -50,7 +51,7 @@ class Server(metaclass=ServerVerifier):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type and exc_type is not KeyboardInterrupt:
-            self.logger.critical(f'Server stopped with error: {exc_val}')
+            self.logger.critical(f'Server stopped with error: {exc_type}: {exc_val}')
         else:
             self.logger.info('Server shutdown.')
         return True
@@ -138,6 +139,7 @@ class Server(metaclass=ServerVerifier):
             host, port = client.getpeername()
             self.logger.info(f'Client {host}:{port} was disconnected.')
             self._connections.remove(client)
+            remove_from_active_clients(host, port)
 
     def _write(self):
         """
