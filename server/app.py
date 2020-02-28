@@ -1,12 +1,13 @@
 """Server side Messenger app."""
 import json
 from select import select
+from threading import Thread
 from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
-from db.utils import remove_from_active_clients
+from db.utils import remove_from_active_clients, clear_active_clients_list
 from log.log_config import LOGGING
 from handler import handle_request
 from decorators import log
@@ -14,13 +15,13 @@ from metaclasses import ServerVerifier
 from descriptors import HostValidator, PortValidator, BufsizeValidator
 
 
-class Server(metaclass=ServerVerifier):
+class Server(Thread, metaclass=ServerVerifier):
     """Messenger server side main class."""
     host = HostValidator()
     port = PortValidator()
     bufsize = BufsizeValidator()
 
-    def __init__(self, host='0.0.0.0', port=7777, backlog=5, bufsize=1024):
+    def __init__(self, host, port, backlog=5, bufsize=1024):
         """
         Server initialization.
         :param (str) host: Server IP address.
@@ -29,6 +30,7 @@ class Server(metaclass=ServerVerifier):
         the system will allow before refusing new connections.
         :param (int) bufsize: The maximum amount of data to be received at once.
         """
+        super().__init__()
         self.bufsize = bufsize
         self.backlog = backlog
         self.host = host
@@ -45,11 +47,13 @@ class Server(metaclass=ServerVerifier):
         self.logger = getLogger('server')
 
     def __enter__(self):
+        clear_active_clients_list()
         if not self.socket:
             self.socket = socket(AF_INET, SOCK_STREAM)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        clear_active_clients_list()
         if exc_type and exc_type is not KeyboardInterrupt:
             self.logger.critical(f'Server stopped with error: {exc_type}: {exc_val}')
         else:
