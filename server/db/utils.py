@@ -1,9 +1,10 @@
 import hashlib
+from collections import namedtuple
 from datetime import datetime
 
 from sqlalchemy import and_
 
-from db.database import session_scope, no_expire_session_scope
+from db.database import session_scope
 from db.models import ClientSession, Client, ActiveClient
 from db.settings import SECRET_KEY
 
@@ -27,7 +28,7 @@ def authenticate(login, password):
 
 
 def login(request, client):
-    with no_expire_session_scope() as session:
+    with session_scope(expire=False) as session:
         hash_obj = hashlib.sha256()
         hash_obj.update(SECRET_KEY.encode('UTF-8'))
         hash_obj.update(str(request.get('time')).encode('UTF-8'))
@@ -49,14 +50,38 @@ def login(request, client):
         return token
 
 
-def get_active_sessions():
-    with session_scope() as session:
-        return session.query(ClientSession).filter_by(closed=None).all()
+def get_connections():
+    with session_scope(expire=False) as session:
+        return session.query(ActiveClient).all()
 
 
-def get_clients():
-    with session_scope() as session:
-        return session.query(Client).all()
+def get_client_stats():
+    # TODO: Разобраться с lazy загрузкой при relationship.
+    #  Связанные объекты не передаются за пределы сессии.
+    #  По итогу надо переработать этот костыль, чтобы при передаче
+    #  объекта clients за пределы сессии были доступны все связанные объекты
+    with session_scope(expire=False) as session:
+        clients = session.query(Client).all()
+
+        Client_stats = namedtuple('Client_stats', [
+            'client_id', 'client_name', 'last_login', 'sent_messages_qty', 'gotten_messages_qty'
+        ])
+
+        stats_list = list()
+
+        for client in clients:
+            client_id = str(client.id)
+            client_name = client.name
+            last_login = str(
+                client.sessions.order_by(ClientSession.created.desc()).first().created.replace(microsecond=0)
+            )
+            sent_messages_qty = str(client.sent_messages.count())
+            gotten_messages_qty = str(client.gotten_messages.count())
+
+            stats = Client_stats(client_id, client_name, last_login, sent_messages_qty, gotten_messages_qty)
+            stats_list.append(stats)
+
+        return stats_list
 
 
 def add_client_to_active_list(request, client):
@@ -84,3 +109,11 @@ def remove_from_active_clients(addr, port):
 
         if active_connection:
             session.delete(active_connection)
+
+
+def clear_active_clients_list():
+    with session_scope() as session:
+        active_connections = session.query(ActiveClient).all()
+
+        for connection in active_connections:
+            session.delete(connection)
