@@ -10,8 +10,8 @@ class MainWindow(QMainWindow):
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(qApp.quit)
 
-        # Кнопка обновить список клиентов
-        # self.refresh_button = QAction('Обновить список', self)
+        # TODO: Убрать обновление по кнопке, сделать обновление через созданные триггеры
+        self.refresh_button = QAction('Refresh', self)
 
         # Кнопка настроек сервера
         self.config_btn = QAction('Settings', self)
@@ -25,9 +25,9 @@ class MainWindow(QMainWindow):
         # Тулбар
         self.toolbar = self.addToolBar('MainBar')
         self.toolbar.addAction(exitAction)
-        # self.toolbar.addAction(self.refresh_button)
         self.toolbar.addAction(self.show_history_button)
         self.toolbar.addAction(self.config_btn)
+        self.toolbar.addAction(self.refresh_button)
 
         # Настройки геометрии основного окна
         # Поскольку работать с динамическими размерами мы не умеем, и мало времени на изучение, размер окна фиксирован.
@@ -40,9 +40,6 @@ class MainWindow(QMainWindow):
         self.label.move(10, 25)
 
         # Окно со списком подключённых клиентов.
-        self.active_clients_table = QTableView(self)
-        self.active_clients_table.move(10, 45)
-        self.active_clients_table.setFixedSize(780, 400)
-
-        # Последним параметром отображаем окно.
-        self.show()
+        self.connections_table = QTableView(self)
+        self.connections_table.move(10, 45)
+        self.connections_table.setFixedSize(780, 400)

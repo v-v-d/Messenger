@@ -18,22 +18,16 @@ class ConfigWindow(QDialog):
         self.db_path = QLineEdit(self)
         self.db_path.setFixedSize(250, 20)
         self.db_path.move(10, 30)
-        self.db_path.setReadOnly(True)
+        # self.db_path.setReadOnly(True)
 
         # Кнопка выбора пути.
         self.db_path_select = QPushButton('Browse...', self)
         self.db_path_select.move(275, 28)
 
-        # Функция обработчик открытия окна выбора папки
-        def open_file_dialog():
-            global dialog
-            dialog = QFileDialog(self)
-            path = dialog.getExistingDirectory()
-            path = path.replace('/', '\\')
-            self.db_path.clear()
-            self.db_path.insert(path)
+        # Окно выбора папки с БД.
+        self.dialog = QFileDialog(self)
 
-        self.db_path_select.clicked.connect(open_file_dialog)
+        self.db_path_select.clicked.connect(self.open_file_dialog)
 
         # Метка с именем поля файла базы данных
         self.db_file_label = QLabel('Database filename: ', self)
@@ -56,19 +50,19 @@ class ConfigWindow(QDialog):
         self.port.setFixedSize(150, 20)
 
         # Метка с адресом для соединений
-        self.ip_label = QLabel('IP address: ', self)
-        self.ip_label.move(10, 148)
-        self.ip_label.setFixedSize(180, 15)
+        self.host_label = QLabel('IP address: ', self)
+        self.host_label.move(10, 148)
+        self.host_label.setFixedSize(180, 15)
 
         # Метка с напоминанием о пустом поле.
-        self.ip_label_note = QLabel('(blank for accepting from any addresses)', self)
-        self.ip_label_note.move(10, 168)
-        self.ip_label_note.setFixedSize(500, 30)
+        self.host_label_note = QLabel('(blank for accepting from any addresses)', self)
+        self.host_label_note.move(10, 168)
+        self.host_label_note.setFixedSize(500, 30)
 
         # Поле для ввода ip
-        self.ip = QLineEdit(self)
-        self.ip.move(200, 148)
-        self.ip.setFixedSize(150, 20)
+        self.host = QLineEdit(self)
+        self.host.move(200, 148)
+        self.host.setFixedSize(150, 20)
 
         # Кнопка сохранения настроек
         self.save_btn = QPushButton('Save', self)
@@ -77,6 +71,18 @@ class ConfigWindow(QDialog):
         # Кнапка закрытия окна
         self.close_button = QPushButton('Close', self)
         self.close_button.move(275, 220)
-        self.close_button.clicked.connect(self.close)
+        self.close_button.clicked.connect(self.clear_close_and_destroy)
 
-        self.show()
+    def open_file_dialog(self):
+        path = self.dialog.getExistingDirectory()
+        path = path.replace('/', '\\')
+        self.db_path.clear()
+        self.db_path.insert(path)
+
+    def clear_close_and_destroy(self):
+        self.db_path.clear()
+        self.db_file.clear()
+        self.port.clear()
+        self.host.clear()
+        self.close()
+        self.destroy()

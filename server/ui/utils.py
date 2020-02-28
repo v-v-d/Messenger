@@ -1,68 +1,54 @@
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
-from db.utils import get_active_sessions, get_clients
-
-from db.models import ClientSession
+from db.utils import get_connections, get_client_stats
 
 
-def get_connections_model():
-    active_sessions = get_active_sessions()
-    connections_model = QStandardItemModel()
-    connections_model.setHorizontalHeaderLabels([
-        'Client', 'IP address', 'Port', 'Created'
+def get_connections_table():
+    connections = get_connections()
+    connections_table = QStandardItemModel()
+    connections_table.setHorizontalHeaderLabels([
+        'Client id', 'Client', 'IP address', 'Port', 'Created'
     ])
 
-    for session in active_sessions:
-        client = session.client.name
-        addr = session.local_addr
-        port = session.local_port
-        created = session.created
+    for connection in connections:
+        client_id = str(connection.client.id)
+        client = connection.client.name
+        addr = connection.addr
+        port = str(connection.port)
+        created = str(connection.created.replace(microsecond=0))
 
-        client = QStandardItem(client)
-        client.setEditable(False)
+        row_list = get_row_list(client_id, client, addr, port, created)
+        connections_table.appendRow(row_list)
 
-        addr = QStandardItem(addr)
-        addr.setEditable(False)
-
-        port = QStandardItem(str(port))
-        port.setEditable(False)
-
-        created = QStandardItem(str(created.replace(microsecond=0)))
-        created.setEditable(False)
-
-        connections_model.appendRow([
-            client, addr, port, created
-        ])
-    return connections_model
+    return connections_table
 
 
-def get_client_stats_model():
-    clients = get_clients()
+def get_client_stats_table():
+    client_stats = get_client_stats()
 
-    stats_model = QStandardItemModel()
-    stats_model.setHorizontalHeaderLabels([
-        'Client', 'Last login', 'Sent messages', 'Gotten messages'
+    stats = QStandardItemModel()
+    stats.setHorizontalHeaderLabels([
+        'Client id', 'Client', 'Last login', 'Sent messages', 'Gotten messages'
     ])
 
-    for client in clients:
-        client_name = client.name
-        last_login = client.sessions.order_by(ClientSession.created.desc()).first().created
-        sent_messages_qty = client.sent_messages.count()
-        gotten_messages_qty = client.gotten_messages.count()
+    for stat in client_stats:
+        client_id = stat.client_id
+        client_name = stat.client_name
+        last_login = stat.last_login
+        sent_messages_qty = stat.sent_messages_qty
+        gotten_messages_qty = stat.gotten_messages_qty
 
-        client_name = QStandardItem(client_name)
-        client_name.setEditable(False)
+        row_list = get_row_list(client_id, client_name, last_login, sent_messages_qty, gotten_messages_qty)
+        stats.appendRow(row_list)
 
-        last_login = QStandardItem(str(last_login.replace(microsecond=0)))
-        last_login.setEditable(False)
+    return stats
 
-        sent_messages_qty = QStandardItem(str(sent_messages_qty))
-        sent_messages_qty.setEditable(False)
 
-        gotten_messages_qty = QStandardItem(str(gotten_messages_qty))
-        gotten_messages_qty.setEditable(False)
+def get_row_list(*row_names):
+    return [create_new_row(row_name) for row_name in row_names]
 
-        stats_model.appendRow([
-            client_name, last_login, sent_messages_qty, gotten_messages_qty
-        ])
-    return stats_model
+
+def create_new_row(row_name):
+    row = QStandardItem(row_name)
+    row.setEditable(False)
+    return row
