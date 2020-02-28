@@ -14,29 +14,19 @@ def migrate_db():
 
 
 @contextmanager
-def session_scope():
+def session_scope(expire=True):
     """Database connection context manager."""
-    session = Session()
-    try:
-        yield session
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+    if isinstance(expire, bool):
+        session = Session()
+        session.expire_on_commit = expire
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
-
-@contextmanager
-def no_expire_session_scope():
-    """Database connection context manager with no expire on commit."""
-    session = Session()
-    session.expire_on_commit = False
-    try:
-        yield session
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+    else:
+        raise ValueError(f'Expire attr must be bool. Got {type(expire)}')
