@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
 from db.models import Client, Message, ClientSession, ClientContact
-from db.database import session_scope, no_expire_session_scope
+from db.database import session_scope
 from db.utils import login, authenticate, get_validation_errors, add_client_to_active_list, remove_from_active_clients
 from protocol import make_response
 from utils import get_socket_info
@@ -57,7 +57,7 @@ def login_controller(request):
 
 
 def logout_controller(request):
-    with no_expire_session_scope() as session:
+    with session_scope(expire=False) as session:
         client_session = session.query(ClientSession).filter_by(token=request.get('token')).first()
         if client_session:
             client_session.closed = datetime.now()
@@ -84,6 +84,7 @@ def presence_controller(request):
             active_session = client.sessions.filter_by(closed=None).first()
 
             if active_session:
+                # TODO: Вместо проверки IP сделать проверку MAC, внести изменения в протокол
                 last_addr = active_session.remote_addr
                 current_addr = request.get('address').get('remote').get('addr')
 
