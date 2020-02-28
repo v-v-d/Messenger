@@ -3,14 +3,18 @@ from datetime import datetime
 
 from sqlalchemy import (
     create_engine, MetaData, Column,
-    Integer, String, DateTime, ForeignKey, Boolean
+    Integer, String, DateTime, ForeignKey, Boolean,
+    event
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from db.settings import DB_CONNECTION_URL
+from utils import parse_args, get_config
 
-ENGINE = create_engine(DB_CONNECTION_URL, echo=False, pool_recycle=7200)
+PARSER = parse_args()
+CONFIG = get_config(PARSER)
+
+ENGINE = create_engine(CONFIG.db_connection_url, echo=False, pool_recycle=7200)
 Base = declarative_base(metadata=MetaData(bind=ENGINE))
 
 
@@ -62,7 +66,7 @@ class ClientSession(Base):
     local_addr = Column(String, nullable=False)
     local_port = Column(Integer, nullable=False)
     client_id = Column(Integer, ForeignKey('clients.id'))
-    client = relationship('Client', back_populates='sessions')
+    client = relationship('Client', lazy='subquery', back_populates='sessions')
 
     def __repr__(self):
         return f'{self.client} session'
@@ -93,7 +97,18 @@ class ActiveClient(Base):
     addr = Column(String, nullable=False)
     port = Column(Integer, nullable=False)
     created = Column(DateTime, default=datetime.now())
-    client = relationship('Client', back_populates='entry_in_active')
+    client = relationship('Client', lazy='subquery', back_populates='entry_in_active')
 
     def __repr__(self):
         return f'{self.client} in active clients'
+
+
+@event.listens_for(ActiveClient, 'after_insert')
+@event.listens_for(ActiveClient, 'after_delete')
+def on_active_clients_changed(mapper, connection, target):
+    pass
+    # TODO: Сделать рендер таблицы подключений на ГУИ gui.render_connections_table()
+    # Вот такой костыль работает с опозданием и валит ошибки
+    # from __main__ import gui
+    # gui.render_connections_table()
+    # print('*****************triggered*****************')
