@@ -103,12 +103,12 @@ def add_client_to_active_list(request, client):
 
 def remove_from_active_clients(addr, port):
     with session_scope() as session:
-        active_connection = session.query(ActiveClient).filter(
+        active_client = session.query(ActiveClient).filter(
             and_(ActiveClient.addr == addr, ActiveClient.port == port)
         ).first()
 
-        if active_connection:
-            session.delete(active_connection)
+        if active_client:
+            session.delete(active_client)
 
 
 def clear_active_clients_list():

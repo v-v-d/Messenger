@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 from db.models import ENGINE, Base
 
+
 Session = sessionmaker(bind=ENGINE)
 
 
@@ -16,17 +17,16 @@ def migrate_db():
 @contextmanager
 def session_scope(expire=True):
     """Database connection context manager."""
-    if isinstance(expire, bool):
-        session = Session()
-        session.expire_on_commit = expire
-        try:
-            yield session
-            session.commit()
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-
-    else:
+    if not isinstance(expire, bool):
         raise ValueError(f'Expire attr must be bool. Got {type(expire)}')
+
+    session = Session()
+    session.expire_on_commit = expire
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
