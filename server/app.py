@@ -180,10 +180,11 @@ class Server(Thread, metaclass=ServerVerifier):
         is_sent_to_sender = False
         is_sent_to_receiver = False
         for client in self._connections:
-            if client.getpeername() == sender_addr:
+            peer_name = client.getpeername()
+            if not is_sent_to_sender and peer_name == sender_addr:
                 self._write_to_current_client(response, client)
                 is_sent_to_sender = True
-            elif client.getpeername() == receiver_addr:
+            if not is_sent_to_receiver and peer_name == receiver_addr:
                 self._write_to_current_client(response, client)
                 is_sent_to_receiver = True
 

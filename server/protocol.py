@@ -36,7 +36,7 @@ def make_response(request, code, data=None, r_addr=None, l_addr=None):
     Make response based on passed request, status code and data.
     :param (dict) request: Dict from client with request body.
     :param (int) code: Status code.
-    :param (str) data: Transmitted server data (message).
+    :param (str or dict) data: Transmitted server data (message).
     :param (namedtuple) r_addr: Remote client address.
     :param (namedtuple) l_addr: Local client address.
     :return (dict) : Dict with response body.
@@ -52,11 +52,11 @@ def make_response(request, code, data=None, r_addr=None, l_addr=None):
         'data': data,
         'code': code,
         'address': {
-            'remote': {
+            'remote': {     # TODO: переименовать в IP
                 'addr': r_addr.addr,
                 'port': r_addr.port,
             },
-            'local': {
+            'local': {      # TODO: переименовать в MAC и передавать MAC
                 'addr': l_addr.addr,
                 'port': l_addr.port,
             },

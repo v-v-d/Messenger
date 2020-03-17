@@ -19,7 +19,7 @@ def handle_request(request):
     """
     if is_request_valid(request):
         if request.get('data'):
-            request['data'] = json.loads(request.get('data'))  # TODO: Убрать после появления GUI
+            request['data'] = json.loads(request.get('data'))
 
         action = request.get('action')
         controller = get_controller(action)

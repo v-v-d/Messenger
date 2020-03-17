@@ -29,7 +29,7 @@ def register_controller(request):
         return make_response(request, 200, {'token': token})
 
     except IntegrityError:
-        data = f'Client with name {client_login} already exists.'
+        data = {'errors': f'Client with name {client_login} already exists.'}
         return make_response(request, 400, data)
 
 
@@ -48,11 +48,11 @@ def login_controller(request):
             add_client_to_active_list(request, client)
             return make_response(request, 200, {'token': token})
         else:
-            data = 'Enter correct login or password.'
+            data = {'errors': 'Enter correct login or password.'}
             return make_response(request, 400, data)
 
     except ValueError:
-        data = 'Client already logged in.'
+        data = {'errors': 'Client already logged in.'}
         return make_response(request, 403, data)
 
 
@@ -64,7 +64,7 @@ def logout_controller(request):
             data = 'Client session closed.'
             code = 200
         else:
-            data = 'Client session not found.'
+            data = {'errors': 'Client session not found.'}
             code = 404
 
     if client_session:
@@ -101,24 +101,27 @@ def presence_controller(request):
 
 
 def message_controller(request):
-    errors = get_validation_errors(request, 'text', 'to_client_id')
+    errors = get_validation_errors(request, 'text', 'to_client')
     if errors:
         return make_response(request, 400, {'errors': errors})
 
     request_data = request.get('data')
-    to_client_id = request_data.get('to_client_id')
+    to_client = request_data.get('to_client')
     text = request_data.get('text')
 
     with session_scope() as session:
         try:
+            to_client = session.query(Client).filter_by(name=to_client).first()
+
+        except AttributeError:
+            data = f'Client "{to_client}" not found.'
+            return make_response(request, 404, data)
+
+        else:
             from_client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
             from_client_id = from_client.id
 
-            query = session.query(ClientSession).filter_by(client_id=to_client_id)
-            to_client_session = query.filter_by(closed=None).first()
-
-            addr, port = to_client_session.remote_addr, to_client_session.remote_port
-            r_addr = get_socket_info(addr, port)
+            to_client_id = to_client.id
 
             message = Message(
                 text=text, from_client_id=from_client_id,
@@ -127,17 +130,22 @@ def message_controller(request):
             session.add(message)
 
             data = {
-                'text': text, 'to_client': to_client_session.client.name,
+                'text': text, 'to_client': to_client.name,
                 'from_client': from_client.name, 'time': request.get('time')
             }
-            return make_response(request, 200, data, r_addr)
 
-        except AttributeError:
-            data = f'Client with id #{to_client_id} not found.'
-            return make_response(request, 404, data)
+            to_client_session = to_client.sessions.filter_by(closed=None).first()
+
+            if to_client_session:
+                addr, port = to_client_session.remote_addr, to_client_session.remote_port
+                r_addr = get_socket_info(addr, port)
+
+                return make_response(request, 200, data, r_addr)
+
+            return make_response(request, 200, data)
 
 
-def get_messages_controller(request):   # TODO: реализован на клиенте, удалить
+def get_messages_controller(request):
     errors = get_validation_errors(request, 'from_date')
     if errors:
         return make_response(request, 400, {'errors': errors})
@@ -148,30 +156,26 @@ def get_messages_controller(request):   # TODO: реализован на кли
     with session_scope() as session:
         try:
             client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
-            if client:
-                filtered_sent_messages = client.sent_messages.filter_by(Message.created >= from_date).all()
-                sent_messages = [{
-                        'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
-                        'to_client': msg.to_client.name, 'date': msg.created.timestamp()
-                    }
-                    for msg in filtered_sent_messages
-                ]
-
-                filtered_gotten_messages = client.gotten_messages.filter_by(Message.created >= from_date).all()
-                gotten_messages = [{
-                        'id': msg.id, 'text': msg.text, 'from_client': msg.from_client.name,
-                        'to_client': msg.to_client.name, 'date': msg.created.timestamp()
-                    }
-                    for msg in filtered_gotten_messages
-                ]
-
-                session.expunge_all()
-                data = {'messages': sent_messages + gotten_messages}
-                return make_response(request, 200, data)
 
         except AttributeError:
             data = 'Client not found.'
             return make_response(request, 404, data)
+
+        else:
+            filtered_gotten_messages = client.gotten_messages.filter(Message.created > from_date).all()
+
+            messages = [
+                {
+                    'text': msg.text, 'from_client': msg.from_client.name,
+                    'to_client': msg.to_client.name, 'created': msg.created.timestamp()
+                }
+                for msg in filtered_gotten_messages
+            ]
+
+            # session.expunge_all()
+
+            data = {'messages': messages}
+            return make_response(request, 200, data)
 
 
 def upd_message_controller(request):
@@ -221,31 +225,31 @@ def del_message_controller(request):
 
 
 def add_contact_controller(request):
-    errors = get_validation_errors(request, 'friend_id')
+    errors = get_validation_errors(request, 'friend_name')
     if errors:
         return make_response(request, 400, {'errors': errors})
 
     request_data = request.get('data')
-    friend_id = request_data.get('friend_id')
+    friend_name = request_data.get('friend_name')
 
     with session_scope() as session:
         client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
-        friend = session.query(Client).filter_by(id=friend_id).first()
+        friend = session.query(Client).filter_by(name=friend_name).first()
 
         if client and friend:
-            if client.id == friend_id:
+            if client.name == friend_name:
                 data = 'You can\'t add yourself in your own friend list.'
                 return make_response(request, 400, data)
 
-            existing_friend = client.friends.filter_by(friend_id=friend_id).first()
+            existing_friend = client.friends.filter_by(friend_id=friend.id).first()
             if existing_friend:
                 data = f'{friend.name} already in friend list.'
                 return make_response(request, 400, data)
 
-            contact = ClientContact(owner_id=client.id, friend_id=friend_id)
+            contact = ClientContact(owner_id=client.id, friend_id=friend.id)
             session.add(contact)
 
-            data = {'friend_id': friend_id, 'friend_name': friend.name}
+            data = {'friend_id': friend.id, 'friend_name': friend.name}
             return make_response(request, 200, data)
 
         else:
@@ -262,22 +266,23 @@ def get_contacts_controller(request):   # TODO: реализован на кли
 
 
 def del_contact_controller(request):
-    errors = get_validation_errors(request, 'friend_id')
+    errors = get_validation_errors(request, 'friend')
     if errors:
         return make_response(request, 400, {'errors': errors})
 
     request_data = request.get('data')
-    friend_id = request_data.get('friend_id')
+    friend_name = request_data.get('friend')
 
     with session_scope() as session:
         client = session.query(ClientSession).filter_by(token=request.get('token')).first().client
+        friend_list = client.friends.all()
 
-        existing_friend = client.friends.filter_by(friend_id=friend_id).first()
-        if existing_friend:
-            session.delete(existing_friend)
+        for friend in friend_list:
+            if friend.friend_contact.name == friend_name:
+                session.delete(friend)
 
-            data = {'friend_id': friend_id}
-            return make_response(request, 200, data)
+                data = {'deleted_friend': friend_name}
+                return make_response(request, 200, data)
 
-        data = 'Client not found in friend list.'
+        data = f'Client "{friend_name}" not found in "{client.name}" friend list.'
         return make_response(request, 404, data)
