@@ -42,7 +42,14 @@ def is_data_format_valid(data):
     return True
 
 
-def make_request(action, data, r_addr, l_addr, token=None):
+def is_protocol_object_valid(protocol_object):
+    if 'code' in protocol_object:
+        return is_response_valid(protocol_object)
+    if 'token' in protocol_object:
+        return is_request_valid(protocol_object)
+
+
+def make_request(action, r_addr, l_addr, data=None, token=None):
     """
     Make request based on passed arguments and timestamp.
     :param (str) action: Protocol specially reserved action.
@@ -59,11 +66,11 @@ def make_request(action, data, r_addr, l_addr, token=None):
         'data': data,
         'token': token,
         'address': {
-            'remote': {
+            'remote': {     # TODO: переименовать в IP
                 'addr': r_addr.addr,
                 'port': r_addr.port,
             },
-            'local': {
+            'local': {      # TODO: переименовать в MAC и передавать MAC
                 'addr': l_addr.addr,
                 'port': l_addr.port,
             },
