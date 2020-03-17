@@ -1,12 +1,10 @@
 """Server side database settings for Messenger app."""
 import os
 
-from utils import PARSER
 
 BASE_DIR = os.path.dirname(__file__)
 
 # Database settings
-DB_NAME = PARSER.name
+DEFAULT_DB_NAME = 'clients'
 
-DB_CONNECTION_URL = f'sqlite:///{BASE_DIR}/{DB_NAME}.db'
-
+DEFAULT_DB_CONNECTION_URL = f'sqlite:///{BASE_DIR}/{DEFAULT_DB_NAME}.db'
