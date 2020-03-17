@@ -1,10 +1,14 @@
 """Client side utility functions for Messenger app."""
-import json
-import zlib
 from argparse import ArgumentParser
 from collections import namedtuple
+from logging import getLogger
+from logging.config import dictConfig
 
-from protocol import make_request
+from log.log_config import LOGGING
+
+
+dictConfig(LOGGING)
+LOGGER = getLogger('client')
 
 
 def parse_args(*args):
@@ -22,14 +26,6 @@ def parse_args(*args):
         '-p', '--port', type=int, default=7777,
         required=False, help='Set server listening port'
     )
-    parser.add_argument(
-        '-n', '--name', type=str, default='Guest',
-        required=False, help='Set username'
-    )
-    parser.add_argument(
-        '-m', '--migrate', action='store_true',
-        required=False, help='Propagate changes into database'
-    )
 
     return parser.parse_args(*args)
 
@@ -37,17 +33,10 @@ def parse_args(*args):
 PARSER = parse_args()
 
 
-def make_presence_message(socket, r_addr, l_addr, client_name):
-    """Send presence message for identify client on the server side."""
-    data = json.dumps({'client': client_name})  # TODO: Убрать json.dumps() после появления GUI
-    request = make_request(
-        action='presence',
-        data=data,
-        r_addr=r_addr,
-        l_addr=l_addr,
-    )
-    bytes_request = json.dumps(request).encode('UTF-8')
-    socket.send(zlib.compress(bytes_request))
+def make_presence_action_and_data(client_name):
+    action = 'presence'
+    data = {'client': client_name}
+    return action, data
 
 
 def set_socket_info(addr, port):

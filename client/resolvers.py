@@ -15,6 +15,7 @@ RESPONSE_RESOLVER = {
     'logout': close_session_controller,
     'register': add_session_controller,
 
+    'get_messages': load_messages_to_db_controller,
     'message': message_controller,
     'upd_message': upd_message_controller,
     'del_message': del_message_controller,
@@ -25,12 +26,13 @@ RESPONSE_RESOLVER = {
 
 
 LOCAL_REQUEST_RESOLVER = {
-    'get_messages': get_messages_controller,
+    'local_message': local_message_controller,
+    'get_local_messages': get_messages_controller,
     'get_contacts': get_contacts_controller,
 }
 
 
-def get_controller(action_name):
+def get_response_controller(action_name):
     """Get controller by action name.
     :param (str) action_name: Action name passed from client.
     :return (<class 'function'>): Controller associated with passed action name.
@@ -38,7 +40,7 @@ def get_controller(action_name):
     return RESPONSE_RESOLVER.get(action_name)
 
 
-def get_local_controller(action_name):
+def get_local_request_controller(action_name):
     """Get local controller by action name.
     :param (str) action_name: Action name passed from client.
     :return (<class 'function'>): Controller associated with passed action name.

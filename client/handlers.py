@@ -2,51 +2,30 @@
 from logging import getLogger
 from logging.config import dictConfig
 
-from resolvers import get_controller, get_local_controller
 from log.log_config import LOGGING
-from protocol import is_response_valid, is_request_valid
+from protocol import is_protocol_object_valid
 
 dictConfig(LOGGING)
 LOGGER = getLogger('client')
 
 
-def handle_response(response):
+def handle_protocol_object(protocol_object, resolver, database):
     """
-    Handle response from server.
-    :param (any) response: Response from server.
+    Handle protocol object.
+    :param (any) protocol_object: Response or local request.
     :return (any) : Returned object by controller.
     """
-    if is_response_valid(response):
-        action = response.get('action')
-        controller = get_controller(action)
+    if is_protocol_object_valid(protocol_object):
+        action = protocol_object.get('action')
+        controller = resolver(action)
         if controller:
             try:
-                result = controller(response)
-                LOGGER.debug(f'Controller {action} resolved with response: {response}.')
+                result = controller(protocol_object, database)
+                LOGGER.debug(f'Controller {action} resolved with protocol object: {protocol_object}.')
                 return result
             except Exception as error:
                 LOGGER.error(f'Controller {action} rejected. Error: {error}')
         else:
-            LOGGER.error(f'Controller {action} not found.')
+            LOGGER.error(f'Controller {action} is not local or it\'s not supported.')
     else:
-        LOGGER.error(f'Bad response format: {response}')
-
-
-def handle_local_request(request):
-    """
-    Handle local request.
-    :param (any) request: Local request.
-    :return (<class 'function'>) : Controller associated with action passed in local request.
-    """
-    if is_request_valid(request):
-        action = request.get('action')
-        controller = get_local_controller(action)
-        if controller:
-            try:
-                controller(request)
-                LOGGER.debug(f'Controller {action} resolved with local request: {request}.')
-                return controller
-            except Exception as error:
-                LOGGER.error(f'Controller {action} rejected. Error: {error}')
-    else:
-        LOGGER.error(f'Bad local request format: {request}')
+        LOGGER.error(f'Bad protocol object format: {protocol_object}')
