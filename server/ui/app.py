@@ -9,6 +9,7 @@ from log.log_config import LOGGING
 from ui.client_stats_window import ClientStatsWindow
 from ui.config_window import ConfigWindow
 from ui.main_window import MainWindow
+from ui.signals import SIGNAL
 from ui.utils import get_connections_table, get_client_stats_table
 from utils import get_config_from_yaml, write_config_to_yaml
 
@@ -43,6 +44,7 @@ class GUIApplication:
         self.stat_window = ClientStatsWindow()
         self.main_window = MainWindow()
         self.show_main_window()
+        self.make_signals_connection()
         app.exec_()
 
     def show_main_window(self):
@@ -52,9 +54,6 @@ class GUIApplication:
         self.main_window.show()
 
     def connect_main_window_buttons(self):
-        # TODO: Убрать обновление по кнопке, сделать обновление через созданные триггеры
-        self.main_window.refresh_button.triggered.connect(self.render_connections_table)
-
         self.main_window.show_history_button.triggered.connect(self.show_client_stats_window)
         self.main_window.config_btn.triggered.connect(self.show_config_window)
 
@@ -105,3 +104,6 @@ class GUIApplication:
             errors.append(error)
 
         return errors
+
+    def make_signals_connection(self):
+        SIGNAL.active_client_signal.connect(self.render_connections_table)

@@ -9,6 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
+from ui.signals import SIGNAL
 from utils import parse_args, get_config
 
 PARSER = parse_args()
@@ -100,15 +101,13 @@ class ActiveClient(Base):
     client = relationship('Client', lazy='subquery', back_populates='entry_in_active')
 
     def __repr__(self):
-        return f'{self.client} in active clients'
+        return f'{self.client_name} in active clients'
 
 
 @event.listens_for(ActiveClient, 'after_insert')
 @event.listens_for(ActiveClient, 'after_delete')
 def on_active_clients_changed(mapper, connection, target):
-    pass
-    # TODO: Сделать рендер таблицы подключений на ГУИ gui.render_connections_table()
-    # Вот такой костыль работает с опозданием и валит ошибки
-    # from __main__ import gui
-    # gui.render_connections_table()
-    # print('*****************triggered*****************')
+    try:
+        SIGNAL.active_client_signal.emit()
+    except:
+        pass
