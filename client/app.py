@@ -6,6 +6,9 @@ from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+
 from db.local_storage import LocalStorage
 from handlers import handle_protocol_object
 from log.log_config import LOGGING
@@ -89,14 +92,27 @@ class Client(Thread, metaclass=ClientVerifier):
             )
 
             if not local_response:
-                bytes_request = json.dumps(request).encode('UTF-8')
-                self.socket.send(zlib.compress(bytes_request))
+                # bytes_request = json.dumps(request).encode('UTF-8')
+                encrypted_bytes_request = self._get_encrypted_b_request(request)
+                self.socket.send(zlib.compress(encrypted_bytes_request))
                 self.logger.debug(f'Client send request {request}.')
             else:
                 return local_response
 
         except Exception as error:
             self.logger.critical(f'Can\'t send request. Error: {error}')
+
+    @staticmethod
+    def _get_encrypted_b_request(request):
+        """Get encrypted bytes request with Crypto module."""
+        key = get_random_bytes(16)
+        cipher = AES.new(key, AES.MODE_EAX)
+        b_request = json.dumps(request).encode('UTF-8')
+        encrypted_request, tag = cipher.encrypt_and_digest(b_request)
+        return b'%(nonce)s%(key)s%(tag)s%(data)s' % {
+            b'nonce': cipher.nonce, b'key': key,
+            b'tag': tag, b'data': encrypted_request
+        }
 
     def get_request(self, action, data):
         """Get request to server.
