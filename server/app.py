@@ -1,11 +1,13 @@
 """Server side Messenger app."""
 import json
 from select import select
+from threading import Thread
 from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
+from db.utils import remove_from_active_clients, clear_active_clients_list
 from log.log_config import LOGGING
 from handler import handle_request
 from decorators import log
@@ -13,13 +15,13 @@ from metaclasses import ServerVerifier
 from descriptors import HostValidator, PortValidator, BufsizeValidator
 
 
-class Server(metaclass=ServerVerifier):
+class Server(Thread, metaclass=ServerVerifier):
     """Messenger server side main class."""
     host = HostValidator()
     port = PortValidator()
     bufsize = BufsizeValidator()
 
-    def __init__(self, host='0.0.0.0', port=7777, backlog=5, bufsize=1024):
+    def __init__(self, host, port, backlog=5, bufsize=1024):
         """
         Server initialization.
         :param (str) host: Server IP address.
@@ -28,6 +30,7 @@ class Server(metaclass=ServerVerifier):
         the system will allow before refusing new connections.
         :param (int) bufsize: The maximum amount of data to be received at once.
         """
+        super().__init__()
         self.bufsize = bufsize
         self.backlog = backlog
         self.host = host
@@ -44,13 +47,15 @@ class Server(metaclass=ServerVerifier):
         self.logger = getLogger('server')
 
     def __enter__(self):
+        clear_active_clients_list()
         if not self.socket:
             self.socket = socket(AF_INET, SOCK_STREAM)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        clear_active_clients_list()
         if exc_type and exc_type is not KeyboardInterrupt:
-            self.logger.critical(f'Server stopped with error: {exc_val}')
+            self.logger.critical(f'Server stopped with error: {exc_type}: {exc_val}')
         else:
             self.logger.info('Server shutdown.')
         return True
@@ -138,6 +143,7 @@ class Server(metaclass=ServerVerifier):
             host, port = client.getpeername()
             self.logger.info(f'Client {host}:{port} was disconnected.')
             self._connections.remove(client)
+            remove_from_active_clients(host, port)
 
     def _write(self):
         """
@@ -148,20 +154,48 @@ class Server(metaclass=ServerVerifier):
         """
         if self._requests:
             request = self._requests.pop()
-
-            if request.get('data'):
-                request['data'] = json.loads(request.get('data'))   # TODO: Убрать после появления GUI
-            remote_socket_info = request.get('address').get('remote')
-            r_addr, r_port = remote_socket_info.get('addr'), remote_socket_info.get('port')
-
             response = handle_request(request)
-            if response:
-                for client in self._connections:
-                    if client.getpeername() == (r_addr, r_port):
-                        bytes_response = json.dumps(response).encode('UTF-8')
-                        try:
-                            client.send(compress(bytes_response))
-                            self.logger.debug(f'Server make response: {response}.')
 
-                        except:
-                            self._remove_client(client)
+            if response:
+                sender_addr = self._get_remote_socket_info(request)
+                receiver_addr = self._get_remote_socket_info(response)
+
+                if sender_addr == receiver_addr:
+                    self._write_to_sender(sender_addr, response)
+                else:
+                    self._write_to_sender_and_receiver(sender_addr, receiver_addr, response)
+
+    @staticmethod
+    def _get_remote_socket_info(protocol_object):
+        remote_socket_info = protocol_object.get('address').get('remote')
+        return remote_socket_info.get('addr'), remote_socket_info.get('port')
+
+    def _write_to_sender(self, sender_addr, response):
+        for client in self._connections:
+            if client.getpeername() == sender_addr:
+                self._write_to_current_client(response, client)
+                break
+
+    def _write_to_sender_and_receiver(self, sender_addr, receiver_addr, response):
+        is_sent_to_sender = False
+        is_sent_to_receiver = False
+        for client in self._connections:
+            peer_name = client.getpeername()
+            if not is_sent_to_sender and peer_name == sender_addr:
+                self._write_to_current_client(response, client)
+                is_sent_to_sender = True
+            if not is_sent_to_receiver and peer_name == receiver_addr:
+                self._write_to_current_client(response, client)
+                is_sent_to_receiver = True
+
+            if is_sent_to_sender and is_sent_to_receiver:
+                break
+
+    def _write_to_current_client(self, response, client):
+        bytes_response = json.dumps(response).encode('UTF-8')
+        try:
+            client.send(compress(bytes_response))
+            self.logger.debug(f'Server make response: {response}.')
+
+        except:
+            self._remove_client(client)

@@ -5,7 +5,9 @@ import settings
 
 BASE_DIR = os.path.dirname(__file__)
 
-DB_CONNECTION_URL = f'sqlite:///{BASE_DIR}/default.db'
+DEFAULT_DB_URL = f'{BASE_DIR}/default.db'
+
+DEFAULT_DB_CONNECTION_URL = f'sqlite:///{DEFAULT_DB_URL}'
 
 DEFAULT_SECRET_KEY = 'zp5bK7Ah'
 

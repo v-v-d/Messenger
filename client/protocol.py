@@ -1,4 +1,5 @@
 """Protocol for client side of Messenger app."""
+import json
 from time import time
 
 
@@ -14,7 +15,41 @@ def is_response_valid(response):
     raise ValueError
 
 
-def make_request(action, data, r_addr, l_addr, token=None):
+def is_request_valid(request):
+    """
+    Check for valid keys in request.
+    :param (dict) request: Dict from client with request body.
+    :return (bool) : True if all valid keys in request, False otherwise.
+    """
+    valid_keys = ('action', 'time', 'data', 'token', 'address')
+    is_keys_valid = all(key in request for key in valid_keys)
+
+    return is_keys_valid and is_data_format_valid(request.get('data'))
+
+
+def is_data_format_valid(data):
+    """
+    Validation request data filed format.
+    :param (any) data: Request data filed body.
+    :return (bool) : True if request data filed format valid, False otherwise.
+    """
+    if data:
+        try:
+            json.loads(data)
+            return True
+        except json.JSONDecodeError:
+            return False
+    return True
+
+
+def is_protocol_object_valid(protocol_object):
+    if 'code' in protocol_object:
+        return is_response_valid(protocol_object)
+    if 'token' in protocol_object:
+        return is_request_valid(protocol_object)
+
+
+def make_request(action, r_addr, l_addr, data=None, token=None):
     """
     Make request based on passed arguments and timestamp.
     :param (str) action: Protocol specially reserved action.
@@ -31,11 +66,11 @@ def make_request(action, data, r_addr, l_addr, token=None):
         'data': data,
         'token': token,
         'address': {
-            'remote': {
+            'remote': {     # TODO: переименовать в IP
                 'addr': r_addr.addr,
                 'port': r_addr.port,
             },
-            'local': {
+            'local': {      # TODO: переименовать в MAC и передавать MAC
                 'addr': l_addr.addr,
                 'port': l_addr.port,
             },
