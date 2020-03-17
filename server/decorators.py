@@ -4,8 +4,11 @@ from inspect import currentframe
 from logging import getLogger
 from logging.config import dictConfig
 
-from log.log_config import LOGGING
+from db.database import session_scope
 
+from db.models import ClientSession
+from log.log_config import LOGGING
+from protocol import make_response
 
 dictConfig(LOGGING)
 LOGGER = getLogger('decorators')
@@ -30,3 +33,19 @@ def log(func):
     return wrapper
     # TODO: Remove the words "function" and make auto detect the type of passed func.
     # TODO: If caller is the same func then func.__module__ return <module>. Needed to fix.
+
+
+def login_required(func):
+    """Check that user is logged in based on the valid token exists in request."""
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if 'token' not in request:
+            return make_response(request, 401, 'Valid authentication credentials lack')
+
+        with session_scope() as session:
+            client_session = session.query(ClientSession).filter_by(token=request.get('token')).first()
+            if not client_session or client_session.closed:
+                return make_response(request, 403, 'Access denied')
+
+        return func(request, *args, **kwargs)
+    return wrapper
