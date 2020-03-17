@@ -6,11 +6,13 @@ from logging.config import dictConfig
 from log.log_config import LOGGING
 from protocol import is_request_valid, make_response
 from resolver import get_controller
+from security import encryption_middleware
 
 dictConfig(LOGGING)
 LOGGER = getLogger('server')
 
 
+@encryption_middleware
 def handle_request(request):
     """
     Get response by handling client request.
