@@ -10,10 +10,11 @@ from db.models import ClientSession, Client, ActiveClient
 from db.settings import SECRET_KEY
 
 
-def _get_validation_errors(request, *attrs):
+def get_validation_errors(request, *attrs):
     """Get errors if some attributes not in request."""
+    data = request.get('data')
     message = 'Attribute is required'
-    return {attr: message for attr in attrs if attr not in request}
+    return {attr: message for attr in attrs if attr not in data}
 
 
 def authenticate(login, password):
