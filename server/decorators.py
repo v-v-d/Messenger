@@ -1,4 +1,6 @@
 """Decorators for Messenger server side."""
+import json
+import zlib
 from functools import wraps
 from inspect import currentframe
 from logging import getLogger
@@ -48,4 +50,25 @@ def login_required(func):
                 return make_response(request, 403, 'Access denied')
 
         return func(request, *args, **kwargs)
+    return wrapper
+
+
+def compression_middleware(func):
+    """Decompress request and return compression result."""
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        b_request = zlib.decompress(request)
+        b_response = func(b_request, *args, **kwargs)
+        return zlib.compress(b_response)
+    return wrapper
+
+
+def json_middleware(func):
+    """Load bytes JSON to dict and return bytes JSON."""
+    @wraps(func)
+    def wrapper(raw_request, *args, **kwargs):
+        request = json.loads(raw_request.decode('UTF-8'))
+        LOGGER.debug(f'Client send request: {request}.')
+        response = func(request, *args, **kwargs)
+        return json.dumps(response).encode('UTF-8')
     return wrapper

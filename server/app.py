@@ -2,11 +2,11 @@
 import json
 from select import select
 from threading import Thread
-from zlib import compress, decompress
 from logging import getLogger
 from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 
+import handler
 from db.utils import remove_from_active_clients, clear_active_clients_list
 from log.log_config import LOGGING
 from handler import handle_request
@@ -125,14 +125,12 @@ class Server(Thread, metaclass=ServerVerifier):
 
     def get_request(self, client):
         """
-        Get decoded and decompressed request from client. Add it
-        to requests list.
+        Get request from client and add it to requests list.
         :param (<class 'socket.socket'>) client: Client socket object.
         """
-        bytes_request = decompress(client.recv(self.bufsize))
-        request = json.loads(bytes_request.decode('UTF-8'))
-        self.logger.debug(f'Client send request: {request}')
-        self._requests.append(request)
+        bytes_request = client.recv(self.bufsize)
+        self.logger.debug(f'Client send request.')
+        self._requests.append(bytes_request)
 
     def _remove_client(self, client):
         """
@@ -156,46 +154,39 @@ class Server(Thread, metaclass=ServerVerifier):
             request = self._requests.pop()
             response = handle_request(request)
 
-            if response:
-                sender_addr = self._get_remote_socket_info(request)
-                receiver_addr = self._get_remote_socket_info(response)
+            if response and handler.RECEIVERS:
+                self._send_response(response)
 
-                if sender_addr == receiver_addr:
-                    self._write_to_sender(sender_addr, response)
-                else:
-                    self._write_to_sender_and_receiver(sender_addr, receiver_addr, response)
+    def _send_response(self, response):
+        receiver_1, receiver_2 = self._get_receivers()
+
+        is_sent_to_receiver_1, is_sent_to_receiver_2 = False, False
+        for client in self._connections:
+            peername = client.getpeername()
+            if peername == receiver_1:
+                self._write_to_client(response, client)
+                if not receiver_2:
+                    break
+                is_sent_to_receiver_1 = True
+            elif receiver_2 and peername == receiver_2:
+                self._write_to_client(response, client)
+                is_sent_to_receiver_2 = True
+
+            if is_sent_to_receiver_1 and is_sent_to_receiver_2:
+                break
 
     @staticmethod
-    def _get_remote_socket_info(protocol_object):
-        remote_socket_info = protocol_object.get('address').get('remote')
-        return remote_socket_info.get('addr'), remote_socket_info.get('port')
+    def _get_receivers():
+        if len(handler.RECEIVERS) > 1:
+            receiver_1, receiver_2 = handler.RECEIVERS
+        else:
+            receiver_1, receiver_2 = handler.RECEIVERS.pop(), None
 
-    def _write_to_sender(self, sender_addr, response):
-        for client in self._connections:
-            if client.getpeername() == sender_addr:
-                self._write_to_current_client(response, client)
-                break
+        return receiver_1, receiver_2
 
-    def _write_to_sender_and_receiver(self, sender_addr, receiver_addr, response):
-        is_sent_to_sender = False
-        is_sent_to_receiver = False
-        for client in self._connections:
-            peer_name = client.getpeername()
-            if not is_sent_to_sender and peer_name == sender_addr:
-                self._write_to_current_client(response, client)
-                is_sent_to_sender = True
-            if not is_sent_to_receiver and peer_name == receiver_addr:
-                self._write_to_current_client(response, client)
-                is_sent_to_receiver = True
-
-            if is_sent_to_sender and is_sent_to_receiver:
-                break
-
-    def _write_to_current_client(self, response, client):
-        bytes_response = json.dumps(response).encode('UTF-8')
+    def _write_to_client(self, response, client):
         try:
-            client.send(compress(bytes_response))
-            self.logger.debug(f'Server make response: {response}.')
-
+            client.send(response)
+            self.logger.debug('Server make response.')
         except:
             self._remove_client(client)
