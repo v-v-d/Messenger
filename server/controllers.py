@@ -1,11 +1,18 @@
 """Controllers for server side of Messenger app."""
+import hmac
 from datetime import datetime
 
 from sqlalchemy.exc import IntegrityError
 
 from db.models import Client, Message, ClientSession, ClientContact
 from db.database import session_scope
-from db.utils import login, authenticate, get_validation_errors, add_client_to_active_list, remove_from_active_clients
+
+from db.settings import SECRET_KEY
+from db.utils import (
+    login, authenticate, get_validation_errors,
+    add_client_to_active_list, remove_from_active_clients
+)
+from decorators import login_required
 from protocol import make_response
 from utils import get_socket_info
 
@@ -18,7 +25,10 @@ def register_controller(request):
     data = request.get('data')
     client_login = data.get('login')
 
-    client = Client(name=client_login, password=data.get('password'))
+    hmac_obj = hmac.new(SECRET_KEY.encode(), data.get('password').encode())
+    password_digest = hmac_obj.hexdigest()
+
+    client = Client(name=client_login, password=password_digest)
 
     try:
         with session_scope() as session:
@@ -56,6 +66,7 @@ def login_controller(request):
         return make_response(request, 403, data)
 
 
+@login_required
 def logout_controller(request):
     with session_scope(expire=False) as session:
         client_session = session.query(ClientSession).filter_by(token=request.get('token')).first()
@@ -171,8 +182,6 @@ def get_messages_controller(request):
                 }
                 for msg in filtered_gotten_messages
             ]
-
-            # session.expunge_all()
 
             data = {'messages': messages}
             return make_response(request, 200, data)

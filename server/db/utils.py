@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 from collections import namedtuple
 from datetime import datetime
 
@@ -10,17 +11,20 @@ from db.settings import SECRET_KEY
 
 
 def get_validation_errors(request, *attrs):
+    """Get errors if some attributes not in request."""
     data = request.get('data')
-    errs = {}
-    [errs.update({attr: 'Attribute is required!'}) for attr in attrs if attr not in data]
-    return errs
+    message = 'Attribute is required'
+    return {attr: message for attr in attrs if attr not in data}
 
 
 def authenticate(login, password):
+    """Authenticate client based on valid login and password."""
     with session_scope() as session:
         client = session.query(Client).filter_by(name=login).first()
+        hmac_obj = hmac.new(SECRET_KEY.encode(), password.encode())
+        password_digest = hmac_obj.hexdigest()
 
-        if client and password == client.password:
+        if client and hmac.compare_digest(password_digest, client.password.encode()):
             active_session = client.sessions.filter_by(closed=None).first()
             if active_session:
                 raise ValueError
@@ -28,6 +32,7 @@ def authenticate(login, password):
 
 
 def login(request, client):
+    """Make client session (logging in) and get token for client."""
     with session_scope(expire=False) as session:
         hash_obj = hashlib.sha256()
         hash_obj.update(SECRET_KEY.encode('UTF-8'))

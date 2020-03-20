@@ -6,6 +6,9 @@ from logging.config import dictConfig
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+
 from db.local_storage import LocalStorage
 from handlers import handle_protocol_object
 from log.log_config import LOGGING
@@ -14,7 +17,7 @@ from decorators import log
 from descriptors import PortValidator, HostValidator, BufsizeValidator
 from metaclasses import ClientVerifier
 from resolvers import get_local_request_controller, get_response_controller
-from utils import make_presence_action_and_data, set_socket_info
+from utils import make_presence_action_and_data, set_socket_info, get_chunk
 
 
 class Client(Thread, metaclass=ClientVerifier):
@@ -84,13 +87,14 @@ class Client(Thread, metaclass=ClientVerifier):
         """Send compressed bytes request to server."""
         try:
             request = self.get_request(action, data)
+
             local_response = handle_protocol_object(
                 request, get_local_request_controller, self.database
             )
 
             if not local_response:
-                bytes_request = json.dumps(request).encode('UTF-8')
-                self.socket.send(zlib.compress(bytes_request))
+                encrypted_bytes_request = self._get_encrypted_b_request(request)
+                self.socket.send(zlib.compress(encrypted_bytes_request))
                 self.logger.debug(f'Client send request {request}.')
             else:
                 return local_response
@@ -98,13 +102,26 @@ class Client(Thread, metaclass=ClientVerifier):
         except Exception as error:
             self.logger.critical(f'Can\'t send request. Error: {error}')
 
+    @staticmethod
+    def _get_encrypted_b_request(request):
+        """Get encrypted bytes request with Crypto module."""
+        key = get_random_bytes(16)
+        cipher = AES.new(key, AES.MODE_EAX)
+        b_request = json.dumps(request).encode('UTF-8')
+
+        encrypted_request, tag = cipher.encrypt_and_digest(b_request)
+        return b'%(nonce)s%(key)s%(tag)s%(data)s' % {
+            b'nonce': cipher.nonce, b'key': key,
+            b'tag': tag, b'data': encrypted_request
+        }
+
     def get_request(self, action, data):
         """Get request to server.
         :return (dict): Dict with request body.
         """
         return make_request(
             action=action,
-            data=json.dumps(data),
+            data=data,
             r_addr=self._r_addr,
             l_addr=self._l_addr,
             token=self.token
@@ -118,7 +135,7 @@ class Client(Thread, metaclass=ClientVerifier):
         """Read response from server."""
         while True:
             try:
-                response = self.get_response()
+                response = self._get_decrypted_response()
                 self.logger.debug(f'Client got response: {response}.')
                 data = handle_protocol_object(response, get_response_controller, self.database)
                 if data:
@@ -131,14 +148,25 @@ class Client(Thread, metaclass=ClientVerifier):
                 self.logger.critical(f'Can\'t read response. Error: {error}')
                 break
 
-    def get_response(self):
-        """Get decompressed and decoded response from server.
-        :return (dict): Dict with response body.
-        """
-        bytes_response = zlib.decompress(self.socket.recv(self.bufsize))
-        response = json.loads(bytes_response.decode('UTF-8'))
+    def _get_decrypted_response(self):
+        """Get decrypted response with Crypto module and decode it."""
+        enc_b_response = zlib.decompress(self.socket.recv(self.bufsize))
+        enc_response, tag, cipher = self._get_enc_response_tag_and_cipher(enc_b_response)
+
+        raw_response = cipher.decrypt_and_verify(enc_response, tag).decode('UTF-8')
+        response = json.loads(raw_response)
+
         if is_response_valid(response):
             return response
+
+    @staticmethod
+    def _get_enc_response_tag_and_cipher(encrypted_b_response):
+        nonce, enc_response = get_chunk(encrypted_b_response, 16)
+        key, enc_response = get_chunk(enc_response, 16)
+        tag, enc_response = get_chunk(enc_response, 16)
+        cipher = AES.new(key, AES.MODE_EAX, nonce)
+
+        return enc_response, tag, cipher
 
     def _set_token(self, data):
         token = data.get('token')

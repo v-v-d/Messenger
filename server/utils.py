@@ -79,3 +79,8 @@ def write_config_to_yaml(data, filename=PATH_TO_CONFIG_FILE):
 def get_socket_info(addr, port):
     Socket_info = namedtuple('Socket_info', ['addr', 'port'])
     return Socket_info(addr, port)
+
+
+def get_receiver_addr_and_port(protocol_object):
+    remote_socket_info = protocol_object.get('address').get('remote')
+    return remote_socket_info.get('addr'), remote_socket_info.get('port')

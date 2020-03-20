@@ -18,6 +18,7 @@ def handle_protocol_object(protocol_object, resolver, database):
     if is_protocol_object_valid(protocol_object):
         action = protocol_object.get('action')
         controller = resolver(action)
+
         if controller:
             try:
                 result = controller(protocol_object, database)
