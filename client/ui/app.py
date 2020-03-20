@@ -166,10 +166,8 @@ class GUIApplication:
 
         self.client.client_name = None
         set_client_to_inactive()
-        # TODO: Показать окно логина, удалить connect к текущей db, убрать qApp.exit()
-        qApp.exit()
 
-        # self.show_login_window()
+        qApp.exit()     # TODO: Вместо qApp.exit() показать окно логина, удалить connect к текущей db
 
     def create_account(self, code, data):
         if code == 200:
@@ -183,9 +181,8 @@ class GUIApplication:
 
             self.show_main_window()
         else:
-            self.login_window.message.critical(
-                self.login_window, 'Error', data.get('errors')
-            )
+            errors = ', '.join([f'{key}: {val}' for key, val in data.get('errors').items()])
+            self.login_window.message.critical(self.login_window, 'Error', errors)
 
     def set_client_name_and_connect_to_db(self):
         if self.client_name:

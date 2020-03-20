@@ -1,5 +1,4 @@
 """Controllers for handling local requests."""
-import json
 from datetime import datetime
 
 from sqlalchemy import or_
@@ -7,8 +6,6 @@ from sqlalchemy import or_
 
 def local_message_controller(request, database):
     if database:
-        request = set_request_data_to_dict(request)
-
         created = datetime.fromtimestamp(request.get('time'))
         data = request.get('data')
         text = data.get('text')
@@ -28,7 +25,6 @@ def local_message_controller(request, database):
 
 def get_messages_controller(request, database):
     if database:
-        request = set_request_data_to_dict(request)
         data = request.get('data')
         from_client = data.get('from_client')
         to_client = data.get('to_client')
@@ -53,10 +49,3 @@ def get_contacts_controller(request, database):
             contacts = session.query(database.ClientContact).all()
 
             return contacts if contacts else 'None'
-
-
-def set_request_data_to_dict(request):
-    if request.get('data'):
-        request = request.copy()
-        request['data'] = json.loads(request.get('data'))
-        return request
