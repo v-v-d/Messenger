@@ -8,6 +8,35 @@ from db.settings import DEFAULT_DB_CONNECTION_URL
 from settings import PATH_TO_CONFIG_FILE, DEFAULT_ADDRESS, DEFAULT_PORT
 
 
+# # Uncomment it and replace it instead function below when building
+# # the docs because of sphinx can't autodoc when using argparse lib.
+# def parse_args():
+#     """
+#     Create a command line argument parser and add arguments to it.
+#     :param (Tuple) args: Tuple with arguments for parser.
+#     :return (argparse.Namespace): Namespace with added arguments.
+#     """
+#     import sys
+#     Parser = namedtuple(
+#         'Parser', ['address', 'port', 'migrate', 'config'],
+#         defaults=[None, None, False, None]
+#     )
+#     parser = Parser()
+#
+#     args = sys.argv[1:]
+#
+#     if args:
+#         parser = parser._replace(address=args[0])
+#         if len(args) > 1:
+#             parser = parser._replace(port=args[1])
+#         if len(args) > 2:
+#             parser = parser._replace(migrate=args[2])
+#         if len(args) > 3:
+#             parser = parser._replace(config=args[3])
+#
+#     return parser
+
+
 def parse_args(*args):
     """
     Create a command line argument parser and add arguments to it.
