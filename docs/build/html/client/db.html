@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>db package &#8212; Messenger 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="decorators module" href="decorators.html" />
+    <link rel="prev" title="controllers module" href="controllers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="db-package">
+<h1>db package<a class="headerlink" href="#db-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-db.clients_db">
+<span id="db-clients-db-module"></span><h2>db.clients_db module<a class="headerlink" href="#module-db.clients_db" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="db.clients_db.Client">
+<em class="property">class </em><code class="sig-prename descclassname">db.clients_db.</code><code class="sig-name descname">Client</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.clients_db.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Client model.</p>
+<dl class="attribute">
+<dt id="db.clients_db.Client.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.clients_db.Client.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.clients_db.Client.is_active">
+<code class="sig-name descname">is_active</code><a class="headerlink" href="#db.clients_db.Client.is_active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.clients_db.Client.last_visit">
+<code class="sig-name descname">last_visit</code><a class="headerlink" href="#db.clients_db.Client.last_visit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.clients_db.Client.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#db.clients_db.Client.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="db.clients_db.migrate_db">
+<code class="sig-prename descclassname">db.clients_db.</code><code class="sig-name descname">migrate_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.clients_db.migrate_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate changes made to models into database schema.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="db.clients_db.session_scope">
+<code class="sig-prename descclassname">db.clients_db.</code><code class="sig-name descname">session_scope</code><span class="sig-paren">(</span><em class="sig-param">expire=True</em><span class="sig-paren">)</span><a class="headerlink" href="#db.clients_db.session_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database connection context manager.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-db.local_storage">
+<span id="db-local-storage-module"></span><h2>db.local_storage module<a class="headerlink" href="#module-db.local_storage" title="Permalink to this headline">¶</a></h2>
+<p>Client side database utilities for Messenger app.</p>
+<dl class="class">
+<dt id="db.local_storage.LocalStorage">
+<em class="property">class </em><code class="sig-prename descclassname">db.local_storage.</code><code class="sig-name descname">LocalStorage</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="class">
+<dt id="db.local_storage.LocalStorage.ClientContact">
+<em class="property">class </em><code class="sig-name descname">ClientContact</code><span class="sig-paren">(</span><em class="sig-param">friend</em>, <em class="sig-param">friend_id</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.ClientContact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="db.local_storage.LocalStorage.ClientSession">
+<em class="property">class </em><code class="sig-name descname">ClientSession</code><span class="sig-paren">(</span><em class="sig-param">token</em>, <em class="sig-param">remote_addr</em>, <em class="sig-param">remote_port</em>, <em class="sig-param">local_addr</em>, <em class="sig-param">local_port</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.ClientSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="db.local_storage.LocalStorage.Message">
+<em class="property">class </em><code class="sig-name descname">Message</code><span class="sig-paren">(</span><em class="sig-param">text</em>, <em class="sig-param">created</em>, <em class="sig-param">from_client</em>, <em class="sig-param">to_client</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.create_tables">
+<code class="sig-name descname">create_tables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.create_tables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.session_scope">
+<code class="sig-name descname">session_scope</code><span class="sig-paren">(</span><em class="sig-param">expire=True</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.session_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database connection context manager.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.set_engine">
+<code class="sig-name descname">set_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.set_engine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.set_metadata">
+<code class="sig-name descname">set_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.set_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="db.local_storage.LocalStorage.set_session">
+<code class="sig-name descname">set_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.LocalStorage.set_session" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="db.local_storage.on_contacts_changed">
+<code class="sig-prename descclassname">db.local_storage.</code><code class="sig-name descname">on_contacts_changed</code><span class="sig-paren">(</span><em class="sig-param">mapper</em>, <em class="sig-param">connection</em>, <em class="sig-param">target</em><span class="sig-paren">)</span><a class="headerlink" href="#db.local_storage.on_contacts_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-db.settings">
+<span id="db-settings-module"></span><h2>db.settings module<a class="headerlink" href="#module-db.settings" title="Permalink to this headline">¶</a></h2>
+<p>Server side database settings for Messenger app.</p>
+</div>
+<div class="section" id="module-db.utils">
+<span id="db-utils-module"></span><h2>db.utils module<a class="headerlink" href="#module-db.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="db.utils.add_client_to_clients_db">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">add_client_to_clients_db</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.add_client_to_clients_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_active_client_from_clients_db">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_active_client_from_clients_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_active_client_from_clients_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_active_client_name_from_clients_db">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_active_client_name_from_clients_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_active_client_name_from_clients_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_client_last_visit_date">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_client_last_visit_date</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_client_last_visit_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.set_client_last_visit_date">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">set_client_last_visit_date</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.set_client_last_visit_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.set_client_to_active">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">set_client_to_active</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.set_client_to_active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.set_client_to_inactive">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">set_client_to_inactive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.set_client_to_inactive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-db" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Messenger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">client</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controllers.html">controllers module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">db package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorators.html">decorators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">descriptors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="handlers.html">handlers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_controllers.html">local_controllers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="log.html">log package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metaclasses.html">metaclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolvers.html">resolvers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../server/modules.html">server</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">client</a><ul>
+      <li>Previous: <a href="controllers.html" title="previous chapter">controllers module</a></li>
+      <li>Next: <a href="decorators.html" title="next chapter">decorators module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Vasilev Viktor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/client/db.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

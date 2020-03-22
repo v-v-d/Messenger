@@ -12,6 +12,31 @@ dictConfig(LOGGING)
 LOGGER = getLogger('client')
 
 
+# # Uncomment it and replace it instead function below when building
+# # the docs because of sphinx can't autodoc when using argparse lib.
+# def parse_args():
+#     """
+#     Create a command line argument parser and add arguments to it.
+#     :param (Tuple) args: Tuple with arguments for parser.
+#     :return (argparse.Namespace): Namespace with added arguments.
+#     """
+#     import sys
+#     Parser = namedtuple(
+#         'Parser', ['address', 'port'],
+#         defaults=[None, None]
+#     )
+#     parser = Parser()
+#
+#     args = sys.argv[1:]
+#
+#     if args:
+#         parser = parser._replace(address=args[0])
+#         if len(args) > 1:
+#             parser = parser._replace(port=args[1])
+#
+#     return parser
+
+
 def parse_args(*args):
     """
     Create a command line argument parser and add arguments to it.

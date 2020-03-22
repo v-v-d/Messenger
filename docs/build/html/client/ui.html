@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>ui package &#8212; Messenger 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="utils module" href="utils.html" />
+    <link rel="prev" title="settings module" href="settings.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="ui-package">
+<h1>ui package<a class="headerlink" href="#ui-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ui.add_contact_window">
+<span id="ui-add-contact-window-module"></span><h2>ui.add_contact_window module<a class="headerlink" href="#module-ui.add_contact_window" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.add_contact_window.AddContactWindow">
+<em class="property">class </em><code class="sig-prename descclassname">ui.add_contact_window.</code><code class="sig-name descname">AddContactWindow</code><a class="headerlink" href="#ui.add_contact_window.AddContactWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<dl class="method">
+<dt id="ui.add_contact_window.AddContactWindow.add_btn_handler">
+<code class="sig-name descname">add_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.add_contact_window.AddContactWindow.add_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.add_contact_window.AddContactWindow.add_contact_signal">
+<code class="sig-name descname">add_contact_signal</code><a class="headerlink" href="#ui.add_contact_window.AddContactWindow.add_contact_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.app">
+<span id="ui-app-module"></span><h2>ui.app module<a class="headerlink" href="#module-ui.app" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.app.GUIApplication">
+<em class="property">class </em><code class="sig-prename descclassname">ui.app.</code><code class="sig-name descname">GUIApplication</code><span class="sig-paren">(</span><em class="sig-param">client</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ui.app.GUIApplication.add_contact">
+<code class="sig-name descname">add_contact</code><span class="sig-paren">(</span><em class="sig-param">contact</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.add_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.create_account">
+<code class="sig-name descname">create_account</code><span class="sig-paren">(</span><em class="sig-param">code</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.create_account" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.del_contact">
+<code class="sig-name descname">del_contact</code><span class="sig-paren">(</span><em class="sig-param">contact</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.del_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.get_contacts">
+<code class="sig-name descname">get_contacts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.get_contacts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.get_messages">
+<code class="sig-name descname">get_messages</code><span class="sig-paren">(</span><em class="sig-param">friend</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.get_messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.get_new_messages_from_server">
+<code class="sig-name descname">get_new_messages_from_server</code><span class="sig-paren">(</span><em class="sig-param">from_date</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.get_new_messages_from_server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.login">
+<code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param">login</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.logout">
+<code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.logout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.make_main_window_signals_connection">
+<code class="sig-name descname">make_main_window_signals_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.make_main_window_signals_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.make_signals_connection">
+<code class="sig-name descname">make_signals_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.make_signals_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.render">
+<code class="sig-name descname">render</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.render" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.send_message">
+<code class="sig-name descname">send_message</code><span class="sig-paren">(</span><em class="sig-param">to_client_name</em>, <em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.send_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.set_client_name_and_connect_to_db">
+<code class="sig-name descname">set_client_name_and_connect_to_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.set_client_name_and_connect_to_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.set_up_add_contact_window">
+<code class="sig-name descname">set_up_add_contact_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.set_up_add_contact_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.set_up_del_contact_window">
+<code class="sig-name descname">set_up_del_contact_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.set_up_del_contact_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.set_up_login_window">
+<code class="sig-name descname">set_up_login_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.set_up_login_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.set_up_signup_window">
+<code class="sig-name descname">set_up_signup_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.set_up_signup_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.show_add_contact_window">
+<code class="sig-name descname">show_add_contact_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.show_add_contact_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.show_del_contact_window">
+<code class="sig-name descname">show_del_contact_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.show_del_contact_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.show_login_window">
+<code class="sig-name descname">show_login_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.show_login_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.show_main_window">
+<code class="sig-name descname">show_main_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.show_main_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.show_signup_window">
+<code class="sig-name descname">show_signup_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.show_signup_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.signup">
+<code class="sig-name descname">signup</code><span class="sig-paren">(</span><em class="sig-param">login</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.signup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.start_chatting">
+<code class="sig-name descname">start_chatting</code><span class="sig-paren">(</span><em class="sig-param">friend</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.start_chatting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.validate_render_message">
+<code class="sig-name descname">validate_render_message</code><span class="sig-paren">(</span><em class="sig-param">friend</em>, <em class="sig-param">client_name</em>, <em class="sig-param">messages</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.validate_render_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.app.GUIApplication.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">action</em>, <em class="sig-param">data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.app.GUIApplication.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.del_contact_window">
+<span id="ui-del-contact-window-module"></span><h2>ui.del_contact_window module<a class="headerlink" href="#module-ui.del_contact_window" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.del_contact_window.DelContactWindow">
+<em class="property">class </em><code class="sig-prename descclassname">ui.del_contact_window.</code><code class="sig-name descname">DelContactWindow</code><a class="headerlink" href="#ui.del_contact_window.DelContactWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<dl class="method">
+<dt id="ui.del_contact_window.DelContactWindow.del_btn_handler">
+<code class="sig-name descname">del_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.del_contact_window.DelContactWindow.del_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.del_contact_window.DelContactWindow.del_contact_signal">
+<code class="sig-name descname">del_contact_signal</code><a class="headerlink" href="#ui.del_contact_window.DelContactWindow.del_contact_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.del_contact_window.DelContactWindow.render_del_contacts_list">
+<code class="sig-name descname">render_del_contacts_list</code><span class="sig-paren">(</span><em class="sig-param">contacts</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.del_contact_window.DelContactWindow.render_del_contacts_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.login_window">
+<span id="ui-login-window-module"></span><h2>ui.login_window module<a class="headerlink" href="#module-ui.login_window" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.login_window.LoginWindow">
+<em class="property">class </em><code class="sig-prename descclassname">ui.login_window.</code><code class="sig-name descname">LoginWindow</code><a class="headerlink" href="#ui.login_window.LoginWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<dl class="method">
+<dt id="ui.login_window.LoginWindow.login_btn_handler">
+<code class="sig-name descname">login_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.login_window.LoginWindow.login_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.login_window.LoginWindow.login_signal">
+<code class="sig-name descname">login_signal</code><a class="headerlink" href="#ui.login_window.LoginWindow.login_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.login_window.LoginWindow.signup_btn_handler">
+<code class="sig-name descname">signup_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.login_window.LoginWindow.signup_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.login_window.LoginWindow.switch_to_signup">
+<code class="sig-name descname">switch_to_signup</code><a class="headerlink" href="#ui.login_window.LoginWindow.switch_to_signup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.main_window">
+<span id="ui-main-window-module"></span><h2>ui.main_window module<a class="headerlink" href="#module-ui.main_window" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.main_window.MainWindow">
+<em class="property">class </em><code class="sig-prename descclassname">ui.main_window.</code><code class="sig-name descname">MainWindow</code><span class="sig-paren">(</span><em class="sig-param">client_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code></p>
+<dl class="method">
+<dt id="ui.main_window.MainWindow.add_contact_btn_handler">
+<code class="sig-name descname">add_contact_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.add_contact_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.del_contact_btn_handler">
+<code class="sig-name descname">del_contact_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.del_contact_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.list_contacts_click_handler">
+<code class="sig-name descname">list_contacts_click_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.list_contacts_click_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.main_window.MainWindow.logout_signal">
+<code class="sig-name descname">logout_signal</code><a class="headerlink" href="#ui.main_window.MainWindow.logout_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.menu_logout_handler">
+<code class="sig-name descname">menu_logout_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.menu_logout_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.render_contacts">
+<code class="sig-name descname">render_contacts</code><span class="sig-paren">(</span><em class="sig-param">contacts</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.render_contacts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.render_message">
+<code class="sig-name descname">render_message</code><span class="sig-paren">(</span><em class="sig-param">friend</em>, <em class="sig-param">client_name</em>, <em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.render_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.render_messages">
+<code class="sig-name descname">render_messages</code><span class="sig-paren">(</span><em class="sig-param">friend</em>, <em class="sig-param">client_name</em>, <em class="sig-param">messages</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.render_messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.render_welcome_message">
+<code class="sig-name descname">render_welcome_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.render_welcome_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.send_btn_handler">
+<code class="sig-name descname">send_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.send_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.main_window.MainWindow.send_message_signal">
+<code class="sig-name descname">send_message_signal</code><a class="headerlink" href="#ui.main_window.MainWindow.send_message_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.main_window.MainWindow.set_elements_disable_status">
+<code class="sig-name descname">set_elements_disable_status</code><span class="sig-paren">(</span><em class="sig-param">status</em><span class="sig-paren">)</span><a class="headerlink" href="#ui.main_window.MainWindow.set_elements_disable_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.main_window.MainWindow.start_chatting_signal">
+<code class="sig-name descname">start_chatting_signal</code><a class="headerlink" href="#ui.main_window.MainWindow.start_chatting_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.main_window.MainWindow.switch_to_add_contact">
+<code class="sig-name descname">switch_to_add_contact</code><a class="headerlink" href="#ui.main_window.MainWindow.switch_to_add_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.main_window.MainWindow.switch_to_del_contact">
+<code class="sig-name descname">switch_to_del_contact</code><a class="headerlink" href="#ui.main_window.MainWindow.switch_to_del_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.signals">
+<span id="ui-signals-module"></span><h2>ui.signals module<a class="headerlink" href="#module-ui.signals" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.signals.SenderObject">
+<em class="property">class </em><code class="sig-prename descclassname">ui.signals.</code><code class="sig-name descname">SenderObject</code><a class="headerlink" href="#ui.signals.SenderObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QObject</span></code></p>
+<dl class="attribute">
+<dt id="ui.signals.SenderObject.auth_signal">
+<code class="sig-name descname">auth_signal</code><a class="headerlink" href="#ui.signals.SenderObject.auth_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.signals.SenderObject.contact_signal">
+<code class="sig-name descname">contact_signal</code><a class="headerlink" href="#ui.signals.SenderObject.contact_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.signals.SenderObject.new_message">
+<code class="sig-name descname">new_message</code><a class="headerlink" href="#ui.signals.SenderObject.new_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.signup_window">
+<span id="ui-signup-window-module"></span><h2>ui.signup_window module<a class="headerlink" href="#module-ui.signup_window" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ui.signup_window.SignupWindow">
+<em class="property">class </em><code class="sig-prename descclassname">ui.signup_window.</code><code class="sig-name descname">SignupWindow</code><a class="headerlink" href="#ui.signup_window.SignupWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<dl class="method">
+<dt id="ui.signup_window.SignupWindow.back_to_login_btn_handler">
+<code class="sig-name descname">back_to_login_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.signup_window.SignupWindow.back_to_login_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.signup_window.SignupWindow.back_to_login_signal">
+<code class="sig-name descname">back_to_login_signal</code><a class="headerlink" href="#ui.signup_window.SignupWindow.back_to_login_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ui.signup_window.SignupWindow.signup_btn_handler">
+<code class="sig-name descname">signup_btn_handler</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ui.signup_window.SignupWindow.signup_btn_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ui.signup_window.SignupWindow.signup_signal">
+<code class="sig-name descname">signup_signal</code><a class="headerlink" href="#ui.signup_window.SignupWindow.signup_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ui.utils">
+<span id="ui-utils-module"></span><h2>ui.utils module<a class="headerlink" href="#module-ui.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ui">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ui" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Messenger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">client</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controllers.html">controllers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db.html">db package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorators.html">decorators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">descriptors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="handlers.html">handlers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_controllers.html">local_controllers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="log.html">log package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metaclasses.html">metaclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolvers.html">resolvers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../server/modules.html">server</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">client</a><ul>
+      <li>Previous: <a href="settings.html" title="previous chapter">settings module</a></li>
+      <li>Next: <a href="utils.html" title="next chapter">utils module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Vasilev Viktor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/client/ui.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
