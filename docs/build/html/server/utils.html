@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>utils module &#8212; Messenger 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="ui package" href="ui.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-utils">
+<span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
+<p>Server side utility functions for Messenger app.</p>
+<dl class="function">
+<dt id="utils.get_config">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_config</code><span class="sig-paren">(</span><em class="sig-param">parser</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.get_config_from_yaml">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_config_from_yaml</code><span class="sig-paren">(</span><em class="sig-param">filename='C:\\Users\\v-v-d\\YandexDisk\\GeekBrains\\GitHub\\Messenger\\server\\config.yml'</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_config_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.get_receiver_addr_and_port">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_receiver_addr_and_port</code><span class="sig-paren">(</span><em class="sig-param">protocol_object</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_receiver_addr_and_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.get_socket_info">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_socket_info</code><span class="sig-paren">(</span><em class="sig-param">addr</em>, <em class="sig-param">port</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_socket_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.parse_args">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">parse_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a command line argument parser and add arguments to it.
+:param (Tuple) args: Tuple with arguments for parser.
+:return (argparse.Namespace): Namespace with added arguments.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.write_config_to_yaml">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">write_config_to_yaml</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">filename='C:\\Users\\v-v-d\\YandexDisk\\GeekBrains\\GitHub\\Messenger\\server\\config.yml'</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.write_config_to_yaml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Messenger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../client/modules.html">client</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">server</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controllers.html">controllers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db.html">db package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorators.html">decorators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">descriptors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="handler.html">handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="log.html">log package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metaclasses.html">metaclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolver.html">resolver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">security package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">server</a><ul>
+      <li>Previous: <a href="ui.html" title="previous chapter">ui package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Vasilev Viktor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/server/utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

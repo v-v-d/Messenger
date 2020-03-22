@@ -1,18 +1,18 @@
 """Server side Messenger app."""
 import json
-from select import select
-from threading import Thread
 from logging import getLogger
 from logging.config import dictConfig
+from select import select
 from socket import socket, AF_INET, SOCK_STREAM
+from threading import Thread
 
 import handler
 from db.utils import remove_from_active_clients, clear_active_clients_list
-from log.log_config import LOGGING
-from handler import handle_request
 from decorators import log
-from metaclasses import ServerVerifier
 from descriptors import HostValidator, PortValidator, BufsizeValidator
+from handler import handle_request
+from log.log_config import LOGGING
+from metaclasses import ServerVerifier
 
 
 class Server(Thread, metaclass=ServerVerifier):

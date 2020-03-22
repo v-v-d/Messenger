@@ -1,0 +1,443 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>db package &#8212; Messenger 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="decorators module" href="decorators.html" />
+    <link rel="prev" title="controllers module" href="controllers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="db-package">
+<h1>db package<a class="headerlink" href="#db-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-db.database">
+<span id="db-database-module"></span><h2>db.database module<a class="headerlink" href="#module-db.database" title="Permalink to this headline">¶</a></h2>
+<p>Server side database utilities for Messenger app.</p>
+<dl class="function">
+<dt id="db.database.migrate_db">
+<code class="sig-prename descclassname">db.database.</code><code class="sig-name descname">migrate_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.database.migrate_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate changes made to models into database schema.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="db.database.session_scope">
+<code class="sig-prename descclassname">db.database.</code><code class="sig-name descname">session_scope</code><span class="sig-paren">(</span><em class="sig-param">expire=True</em><span class="sig-paren">)</span><a class="headerlink" href="#db.database.session_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database connection context manager.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-db.models">
+<span id="db-models-module"></span><h2>db.models module<a class="headerlink" href="#module-db.models" title="Permalink to this headline">¶</a></h2>
+<p>Server side database models for Messenger app.</p>
+<dl class="class">
+<dt id="db.models.ActiveClient">
+<em class="property">class </em><code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">ActiveClient</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.ActiveClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Active client model.</p>
+<dl class="attribute">
+<dt id="db.models.ActiveClient.addr">
+<code class="sig-name descname">addr</code><a class="headerlink" href="#db.models.ActiveClient.addr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.client">
+<code class="sig-name descname">client</code><a class="headerlink" href="#db.models.ActiveClient.client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.client_id">
+<code class="sig-name descname">client_id</code><a class="headerlink" href="#db.models.ActiveClient.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.client_name">
+<code class="sig-name descname">client_name</code><a class="headerlink" href="#db.models.ActiveClient.client_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.created">
+<code class="sig-name descname">created</code><a class="headerlink" href="#db.models.ActiveClient.created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.models.ActiveClient.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ActiveClient.port">
+<code class="sig-name descname">port</code><a class="headerlink" href="#db.models.ActiveClient.port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="db.models.Client">
+<em class="property">class </em><code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">Client</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Client model.</p>
+<dl class="attribute">
+<dt id="db.models.Client.entry_in_active">
+<code class="sig-name descname">entry_in_active</code><a class="headerlink" href="#db.models.Client.entry_in_active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.friends">
+<code class="sig-name descname">friends</code><a class="headerlink" href="#db.models.Client.friends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.gotten_messages">
+<code class="sig-name descname">gotten_messages</code><a class="headerlink" href="#db.models.Client.gotten_messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.models.Client.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#db.models.Client.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.owners">
+<code class="sig-name descname">owners</code><a class="headerlink" href="#db.models.Client.owners" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#db.models.Client.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.sent_messages">
+<code class="sig-name descname">sent_messages</code><a class="headerlink" href="#db.models.Client.sent_messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Client.sessions">
+<code class="sig-name descname">sessions</code><a class="headerlink" href="#db.models.Client.sessions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="db.models.ClientContact">
+<em class="property">class </em><code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">ClientContact</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.ClientContact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Client contact model.</p>
+<dl class="attribute">
+<dt id="db.models.ClientContact.confirmed">
+<code class="sig-name descname">confirmed</code><a class="headerlink" href="#db.models.ClientContact.confirmed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientContact.friend_contact">
+<code class="sig-name descname">friend_contact</code><a class="headerlink" href="#db.models.ClientContact.friend_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientContact.friend_id">
+<code class="sig-name descname">friend_id</code><a class="headerlink" href="#db.models.ClientContact.friend_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientContact.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.models.ClientContact.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientContact.owner_contact">
+<code class="sig-name descname">owner_contact</code><a class="headerlink" href="#db.models.ClientContact.owner_contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientContact.owner_id">
+<code class="sig-name descname">owner_id</code><a class="headerlink" href="#db.models.ClientContact.owner_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="db.models.ClientSession">
+<em class="property">class </em><code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">ClientSession</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.ClientSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Client session model.</p>
+<dl class="attribute">
+<dt id="db.models.ClientSession.client">
+<code class="sig-name descname">client</code><a class="headerlink" href="#db.models.ClientSession.client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.client_id">
+<code class="sig-name descname">client_id</code><a class="headerlink" href="#db.models.ClientSession.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.closed">
+<code class="sig-name descname">closed</code><a class="headerlink" href="#db.models.ClientSession.closed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.created">
+<code class="sig-name descname">created</code><a class="headerlink" href="#db.models.ClientSession.created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.models.ClientSession.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.local_addr">
+<code class="sig-name descname">local_addr</code><a class="headerlink" href="#db.models.ClientSession.local_addr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.local_port">
+<code class="sig-name descname">local_port</code><a class="headerlink" href="#db.models.ClientSession.local_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.remote_addr">
+<code class="sig-name descname">remote_addr</code><a class="headerlink" href="#db.models.ClientSession.remote_addr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.remote_port">
+<code class="sig-name descname">remote_port</code><a class="headerlink" href="#db.models.ClientSession.remote_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.ClientSession.token">
+<code class="sig-name descname">token</code><a class="headerlink" href="#db.models.ClientSession.token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="db.models.Message">
+<em class="property">class </em><code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">Message</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Message model.</p>
+<dl class="attribute">
+<dt id="db.models.Message.created">
+<code class="sig-name descname">created</code><a class="headerlink" href="#db.models.Message.created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.edited">
+<code class="sig-name descname">edited</code><a class="headerlink" href="#db.models.Message.edited" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.from_client">
+<code class="sig-name descname">from_client</code><a class="headerlink" href="#db.models.Message.from_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.from_client_id">
+<code class="sig-name descname">from_client_id</code><a class="headerlink" href="#db.models.Message.from_client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#db.models.Message.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.text">
+<code class="sig-name descname">text</code><a class="headerlink" href="#db.models.Message.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.to_client">
+<code class="sig-name descname">to_client</code><a class="headerlink" href="#db.models.Message.to_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="db.models.Message.to_client_id">
+<code class="sig-name descname">to_client_id</code><a class="headerlink" href="#db.models.Message.to_client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="db.models.on_active_clients_changed">
+<code class="sig-prename descclassname">db.models.</code><code class="sig-name descname">on_active_clients_changed</code><span class="sig-paren">(</span><em class="sig-param">mapper</em>, <em class="sig-param">connection</em>, <em class="sig-param">target</em><span class="sig-paren">)</span><a class="headerlink" href="#db.models.on_active_clients_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-db.settings">
+<span id="db-settings-module"></span><h2>db.settings module<a class="headerlink" href="#module-db.settings" title="Permalink to this headline">¶</a></h2>
+<p>Server side database settings for Messenger app.</p>
+</div>
+<div class="section" id="module-db.utils">
+<span id="db-utils-module"></span><h2>db.utils module<a class="headerlink" href="#module-db.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="db.utils.add_client_to_active_list">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">add_client_to_active_list</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">client</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.add_client_to_active_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.authenticate">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">authenticate</code><span class="sig-paren">(</span><em class="sig-param">login</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.authenticate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticate client based on valid login and password.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="db.utils.clear_active_clients_list">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">clear_active_clients_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.clear_active_clients_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_client_stats">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_client_stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_client_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_connections">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_connections</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_connections" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="db.utils.get_validation_errors">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">get_validation_errors</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">*attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.get_validation_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get errors if some attributes not in request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="db.utils.login">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">client</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make client session (logging in) and get token for client.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="db.utils.remove_from_active_clients">
+<code class="sig-prename descclassname">db.utils.</code><code class="sig-name descname">remove_from_active_clients</code><span class="sig-paren">(</span><em class="sig-param">addr</em>, <em class="sig-param">port</em><span class="sig-paren">)</span><a class="headerlink" href="#db.utils.remove_from_active_clients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-db" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Messenger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../client/modules.html">client</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">server</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controllers.html">controllers module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">db package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorators.html">decorators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">descriptors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="handler.html">handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="log.html">log package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metaclasses.html">metaclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolver.html">resolver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">security package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">server</a><ul>
+      <li>Previous: <a href="controllers.html" title="previous chapter">controllers module</a></li>
+      <li>Next: <a href="decorators.html" title="next chapter">decorators module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Vasilev Viktor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/server/db.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

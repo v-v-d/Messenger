@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>decorators module &#8212; Messenger 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="descriptors module" href="descriptors.html" />
+    <link rel="prev" title="db package" href="db.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-decorators">
+<span id="decorators-module"></span><h1>decorators module<a class="headerlink" href="#module-decorators" title="Permalink to this headline">¶</a></h1>
+<p>Decorators for Messenger server side.</p>
+<dl class="function">
+<dt id="decorators.compression_middleware">
+<code class="sig-prename descclassname">decorators.</code><code class="sig-name descname">compression_middleware</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#decorators.compression_middleware" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompress request and return compression result.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="decorators.json_middleware">
+<code class="sig-prename descclassname">decorators.</code><code class="sig-name descname">json_middleware</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#decorators.json_middleware" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load bytes JSON to dict and return bytes JSON.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="decorators.log">
+<code class="sig-prename descclassname">decorators.</code><code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#decorators.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log the passed function name, caller function name and module name
+where the functions is calling. Also args and kwargs are logged too.
+:param (&lt;class ‘function’&gt;) func: Handled function.
+:return (&lt;class ‘function’&gt;): Decorated function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="decorators.login_required">
+<code class="sig-prename descclassname">decorators.</code><code class="sig-name descname">login_required</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#decorators.login_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that user is logged in based on the valid token exists in request.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Messenger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../client/modules.html">client</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">server</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controllers.html">controllers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db.html">db package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">decorators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">descriptors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="handler.html">handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="log.html">log package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metaclasses.html">metaclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">protocol module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolver.html">resolver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">security package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">server</a><ul>
+      <li>Previous: <a href="db.html" title="previous chapter">db package</a></li>
+      <li>Next: <a href="descriptors.html" title="next chapter">descriptors module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Vasilev Viktor.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/server/decorators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -9,7 +9,7 @@ def print_help():
     print('h - help')
     print('q - quit')
     print('s - run server')
-    print('k - run clients')
+    print('c - run client')
     print('x - close all windows')
 
 
@@ -18,17 +18,17 @@ def quit_from_launcher():
 
 
 def start_server():
-    PROCESSES.append(Popen(['py', '-3', 'server', '-m'], creationflags=CREATE_NEW_CONSOLE))
+    PROCESSES.append(Popen(
+        ['py', '-3', 'server', '-m'],
+        creationflags=CREATE_NEW_CONSOLE)
+    )
 
 
-def start_clients():
-    clients_qty = int(input('How many clients you want to start: '))
-
-    for i in range(clients_qty):
-        PROCESSES.append(Popen(
-            ['py', '-3', 'client', '-n', f'client_{i}', '-m'],
-            creationflags=CREATE_NEW_CONSOLE)
-        )
+def start_client():
+    PROCESSES.append(Popen(
+        ['py', '-3', 'client', '-a', '192.168.0.107', '-p', '8080'],
+        creationflags=CREATE_NEW_CONSOLE)
+    )
 
 
 def kill_processes():
@@ -37,21 +37,21 @@ def kill_processes():
         victim.kill()
 
 
-MENU = {
+RESOLVER = {
     'h': print_help,
     'q': quit_from_launcher,
     's': start_server,
-    'k': start_clients,
+    'c': start_client,
     'x': kill_processes,
 }
 
-print('Enter action. "h" for help.')
+print('Welcome to launcher. Enter "h" for help.')
 
 while True:
-    ACTION = input()
+    ACTION = input('Enter action ("h" for help): ')
 
-    if MENU.get(ACTION):
-        IS_CLOSED = MENU[ACTION]()
+    if RESOLVER.get(ACTION):
+        IS_CLOSED = RESOLVER[ACTION]()
         if IS_CLOSED:
             break
     else:
