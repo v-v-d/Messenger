@@ -129,8 +129,12 @@ class Server(Thread, metaclass=ServerVerifier):
         :param (<class 'socket.socket'>) client: Client socket object.
         """
         bytes_request = client.recv(self.bufsize)
-        self.logger.debug(f'Client send request.')
-        self._requests.append(bytes_request)
+
+        if bytes_request:
+            self.logger.debug(f'Client send request.')
+            self._requests.append(bytes_request)
+        else:
+            raise BytesWarning
 
     def _remove_client(self, client):
         """
