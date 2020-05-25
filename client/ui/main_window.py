@@ -1,5 +1,8 @@
 from PyQt5.QtCore import QRect, pyqtSignal, Qt
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
+from PyQt5.QtGui import (
+    QStandardItemModel, QStandardItem, QBrush, QColor, QIcon,
+    QFont,
+    QTextCharFormat)
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QTextEdit, QPushButton, QLabel,
     QListView, QMenuBar, QMenu, QStatusBar, QAction, qApp,
@@ -17,7 +20,7 @@ class MainWindow(QMainWindow):
     def __init__(self, client_name):
         super().__init__()
 
-        self.setFixedSize(756, 534)
+        self.setFixedSize(756, 574)
         self.setWindowTitle(f'Python Messenger ({client_name})')
 
         central_widget = QWidget()
@@ -39,6 +42,32 @@ class MainWindow(QMainWindow):
 
         self.label_new_message = QLabel('Enter message here:', central_widget)
         self.label_new_message.setGeometry(QRect(300, 330, 450, 16))
+
+        self.toolbar = self.addToolBar('Formatting')
+
+        self.char_style_resolver = {
+            'bold': self.set_text_to_bold,
+            'italic': self.set_text_to_italic,
+            'underline': self.set_text_to_underline,
+        }
+        self.font_weight = 50
+        self.font_italic = False
+        self.font_underline = False
+
+        self.text_font = QFont()
+
+        self.text_bold = QAction(QIcon('client/ui/icons/b.jpg'), 'Bold', self)
+        self.text_bold.triggered.connect(lambda: self.set_char_style('bold'))
+
+        self.text_italic = QAction(QIcon('client/ui/icons/i.jpg'), 'Italic', self)
+        self.text_italic.triggered.connect(lambda: self.set_char_style('italic'))
+
+        self.text_underline = QAction(QIcon('client/ui/icons/u.jpg'), 'Underline', self)
+        self.text_underline.triggered.connect(lambda: self.set_char_style('underline'))
+
+        self.toolbar.addActions([
+            self.text_bold, self.text_italic, self.text_underline
+        ])
 
         self.list_contacts = QListView(central_widget)
         self.list_contacts.setGeometry(QRect(10, 20, 251, 411))
@@ -166,3 +195,25 @@ class MainWindow(QMainWindow):
         self.set_elements_disable_status(False)
         friend = self.list_contacts.currentIndex().data()
         self.start_chatting_signal.emit(friend)
+
+    def set_char_style(self, style):
+        cursor = self.text_message.textCursor()
+        char_format = QTextCharFormat()
+        self.char_style_resolver[style](char_format)
+        cursor.mergeCharFormat(char_format)
+
+    def set_text_to_bold(self, char_format):
+        bold_weight = 600
+        thin_weight = 50
+
+        weight = bold_weight if self.font_weight < bold_weight else thin_weight
+        char_format.setFontWeight(weight)
+        self.font_weight = weight
+
+    def set_text_to_italic(self, char_format):
+        char_format.setFontItalic(not self.font_italic)
+        self.font_italic = not self.font_italic
+
+    def set_text_to_underline(self, char_format):
+        char_format.setFontUnderline(not self.font_underline)
+        self.font_underline = not self.font_underline
