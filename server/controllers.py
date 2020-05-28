@@ -1,4 +1,5 @@
 """Controllers for server side of Messenger app."""
+import base64
 import hmac
 from datetime import datetime
 
@@ -25,10 +26,16 @@ def register_controller(request):
     data = request.get('data')
     client_login = data.get('login')
 
-    hmac_obj = hmac.new(SECRET_KEY.encode(), data.get('password').encode())
+    hmac_obj = hmac.new(
+        SECRET_KEY.encode(), data.get('password').encode(), digestmod='sha256'
+    )
     password_digest = hmac_obj.hexdigest()
 
-    client = Client(name=client_login, password=password_digest)
+    bytes_photo = base64.decodebytes(bytes(data.get('photo'), 'UTF-8'))
+
+    client = Client(
+        name=client_login, password=password_digest, photo=bytes_photo
+    )
 
     try:
         with session_scope() as session:
