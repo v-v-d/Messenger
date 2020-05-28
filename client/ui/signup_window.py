@@ -1,11 +1,14 @@
-from PIL import Image, ImageDraw
+import base64
+import io
+
+from PIL import Image
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QMessageBox, QFileDialog
 
 
 class SignupWindow(QDialog):
     back_to_login_signal = pyqtSignal()
-    signup_signal = pyqtSignal(str, str)
+    signup_signal = pyqtSignal(str, str, str)
 
     def __init__(self):
         super().__init__()
@@ -39,6 +42,8 @@ class SignupWindow(QDialog):
         self.password_2.setFixedSize(340, 20)
         self.password_2.move(30, 130)
 
+        self.photo = ''
+
         self.label_photo = QLabel('Choose a photo:', self)
         self.label_photo.setFixedSize(340, 15)
         self.label_photo.move(30, 160)
@@ -48,7 +53,7 @@ class SignupWindow(QDialog):
         self.filename_line.move(30, 180)
 
         self.browse_btn = QPushButton('Browse...', self)
-        self.browse_btn.clicked.connect(self.get_photo)
+        self.browse_btn.clicked.connect(self.browse_btn_handler)
         self.browse_btn.move(280, 179)
 
         self.back_to_login_btn = QPushButton('< Back', self)
@@ -73,21 +78,48 @@ class SignupWindow(QDialog):
         elif all((login, password_1, password_2)) and not password_1 == password_2:
             self.message.warning(self, 'Error', 'Passwords must match.')
         else:
-            self.signup_signal.emit(login, password_1)
+            self.signup_signal.emit(login, password_1, self.photo)
 
     def back_to_login_btn_handler(self):
         self.back_to_login_signal.emit()
 
-    def get_photo(self):
-        self.filename, _ = QFileDialog.getOpenFileName(self, 'Open file', '/')
+    def browse_btn_handler(self):
+        filename, _ = QFileDialog.getOpenFileName(self, 'Open file', '/')
 
-        if self.filename:
+        if filename:
             try:
-                img = Image.open(self.filename)
+                img = Image.open(filename)
             except IOError as error:
                 QMessageBox.warning(
                     self, 'Error',
                     f'Please try to open an another file. Error: {error}'
                 )
             else:
-                self.filename_line.setText(self.filename)
+                if Image.isImageType(img):
+                    self.filename_line.setText(filename)
+
+                    img = self.convert_img_to_jpeg(img)
+                    resized_image = self.resize_image(img)
+                    b_photo = self.convert_image_to_bytes(
+                        resized_image, img.format
+                    )
+                    self.photo = self.get_serialized_photo(b_photo)
+
+    def convert_img_to_jpeg(self, img):
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+            img.format = 'JPEG'
+
+        return img
+
+    def resize_image(self, img):
+        width, height = 50, 50
+        return img.resize((width, height), Image.BICUBIC)
+
+    def convert_image_to_bytes(self, img, img_format):
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format=img_format)
+        return img_byte_arr.getvalue()
+
+    def get_serialized_photo(self, raw_photo):
+        return base64.encodebytes(raw_photo).decode('UTF-8')
