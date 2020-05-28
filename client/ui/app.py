@@ -59,13 +59,22 @@ class GUIApplication:
         self.set_up_del_contact_window()
 
         if self.client.client_name:
-            while True:     # TODO: переделать этот костыль
+            max_waiting_time = 0
+            while True:  # TODO: переделать этот костыль
                 if self.client.token:
                     last_visit_date = get_client_last_visit_date(self.client.client_name)
                     set_client_to_active(self.client.client_name)
                     self.get_new_messages_from_server(last_visit_date)
                     break
+
                 sleep(0.5)
+                max_waiting_time += 0.5
+
+                if max_waiting_time == 10:
+                    self.main_window.message.critical(
+                        self.main_window, 'Error', 'Server timed out.'
+                    )
+                    qApp.exit()
 
             self.show_main_window()
         else:
@@ -151,11 +160,11 @@ class GUIApplication:
         data = {'login': login, 'password': password}
         self.write(action, data)
 
-    def signup(self, login, password):
+    def signup(self, login, password, photo):
         self.client_name = login
 
         action = 'register'
-        data = {'login': login, 'password': password}
+        data = {'login': login, 'password': password, 'photo': photo}
         self.write(action, data)
 
     def logout(self):
