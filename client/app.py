@@ -26,7 +26,7 @@ class Client(Thread, metaclass=ClientVerifier):
     port = PortValidator()
     bufsize = BufsizeValidator()
 
-    def __init__(self, host='127.0.0.1', port=7777, bufsize=1024, client_name=None):
+    def __init__(self, host='127.0.0.1', port=7777, bufsize=16384, client_name=None):
         """
         Client initialization.
         :param (str) host: Server IP address.
@@ -84,7 +84,7 @@ class Client(Thread, metaclass=ClientVerifier):
         self._l_addr = set_socket_info(self.host, self.port)
 
     def write(self, action, data):
-        """Send compressed bytes request to server."""
+        """Send compressed bytes request to server or handle local request."""
         try:
             request = self.get_request(action, data)
 

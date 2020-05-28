@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import (
     create_engine, MetaData, Column,
     Integer, String, DateTime, ForeignKey, Boolean,
-    event
+    event, BLOB
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -26,6 +26,7 @@ class Client(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    photo = Column(BLOB)
     sent_messages = relationship('Message', lazy='dynamic', foreign_keys='Message.from_client_id', back_populates='from_client')
     gotten_messages = relationship('Message', lazy='dynamic', foreign_keys='Message.to_client_id', back_populates='to_client')
     sessions = relationship('ClientSession', lazy='dynamic', back_populates='client')

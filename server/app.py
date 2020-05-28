@@ -21,7 +21,7 @@ class Server(Thread, metaclass=ServerVerifier):
     port = PortValidator()
     bufsize = BufsizeValidator()
 
-    def __init__(self, host, port, backlog=5, bufsize=1024):
+    def __init__(self, host, port, backlog=5, bufsize=16384):
         """
         Server initialization.
         :param (str) host: Server IP address.
