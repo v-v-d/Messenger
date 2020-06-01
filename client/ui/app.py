@@ -190,7 +190,12 @@ class GUIApplication:
 
             self.show_main_window()
         else:
-            errors = ', '.join([f'{key}: {val}' for key, val in data.get('errors').items()])
+            if isinstance(data.get('errors'), dict):
+                errors = ', '.join([
+                    f'{key}: {val}' for key, val in data.get('errors').items()
+                ])
+            else:
+                errors = data.get('errors')
             self.login_window.message.critical(self.login_window, 'Error', errors)
 
     def set_client_name_and_connect_to_db(self):

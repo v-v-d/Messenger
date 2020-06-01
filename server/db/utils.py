@@ -21,7 +21,7 @@ def authenticate(login, password):
     """Authenticate client based on valid login and password."""
     with session_scope() as session:
         client = session.query(Client).filter_by(name=login).first()
-        hmac_obj = hmac.new(SECRET_KEY.encode(), password.encode())
+        hmac_obj = hmac.new(SECRET_KEY.encode(), password.encode(), digestmod='sha256')
         password_digest = hmac_obj.hexdigest()
 
         if client and hmac.compare_digest(password_digest, client.password.encode()):
