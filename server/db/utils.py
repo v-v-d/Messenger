@@ -24,7 +24,7 @@ def authenticate(login, password):
         hmac_obj = hmac.new(SECRET_KEY.encode(), password.encode(), digestmod='sha256')
         password_digest = hmac_obj.hexdigest()
 
-        if client and hmac.compare_digest(password_digest, client.password.encode()):
+        if client and hmac.compare_digest(password_digest.encode(), client.password.encode()):
             active_session = client.sessions.filter_by(closed=None).first()
             if active_session:
                 raise ValueError

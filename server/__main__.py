@@ -47,19 +47,6 @@ if PARSER.migrate:
 
 CONFIG = get_config(PARSER)
 
-# #Solution based on the 'select' module.
-#
-# try:
-#     with Server(host=CONFIG.address, port=CONFIG.port) as server:
-#         server.daemon = True
-#         server.start()
-#
-#         with GUIApplication() as gui:
-#             gui.render()
-#
-# except ValueError as error:
-#     LOGGER.critical(f'Can\'t run the server. Error: {error}')
-
 server_meta = ServerMeta(CONFIG.address, CONFIG.port)
 
 asyncio.run(run_server(server_meta.host, server_meta.port))

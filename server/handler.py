@@ -7,7 +7,7 @@ from log.log_config import LOGGING
 from protocol import is_request_valid, make_response
 from resolver import get_controller
 from security.middlewares import encryption_middleware
-# from utils import get_receiver_addr_and_port
+from utils import get_receiver_addr_and_port
 
 dictConfig(LOGGING)
 LOGGER = getLogger('server')
@@ -39,7 +39,7 @@ def handle_request(request):
         response = make_response(request, 400, 'Bad request format.')
         LOGGER.error(f'Bad request format: {request}')
 
-    # global RECEIVERS    # TODO: Убрать global
-    # RECEIVERS = {get_receiver_addr_and_port(request), get_receiver_addr_and_port(response)}
+    global RECEIVER    # TODO: Убрать global
+    RECEIVER = get_receiver_addr_and_port(response)
 
     return response

@@ -3,7 +3,7 @@ from logging import getLogger
 from logging.config import dictConfig
 from time import sleep
 
-from PyQt5.QtWidgets import QApplication, qApp
+from PyQt5.QtWidgets import QApplication, qApp, QMessageBox
 
 from db.local_storage import LocalStorage
 from db.utils import (
@@ -71,9 +71,10 @@ class GUIApplication:
                 max_waiting_time += 0.5
 
                 if max_waiting_time == 10:
-                    self.main_window.message.critical(
+                    QMessageBox.critical(
                         self.main_window, 'Error', 'Server timed out.'
                     )
+                    # TODO: не доходит до exit, виснет на сообщении
                     qApp.exit()
 
             self.show_main_window()
