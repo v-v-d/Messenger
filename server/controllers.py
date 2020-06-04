@@ -60,6 +60,11 @@ def login_controller(request):
     try:
         client = authenticate(data.get('login'), data.get('password'))
 
+    except ValueError:
+        data = {'errors': 'Client already logged in.'}
+        return make_response(request, 403, data)
+
+    else:
         if client:
             token = login(request, client)
             add_client_to_active_list(request, client)
@@ -67,10 +72,6 @@ def login_controller(request):
         else:
             data = {'errors': 'Enter correct login or password.'}
             return make_response(request, 400, data)
-
-    except ValueError:
-        data = {'errors': 'Client already logged in.'}
-        return make_response(request, 403, data)
 
 
 @login_required
