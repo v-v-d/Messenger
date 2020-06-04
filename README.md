@@ -1,7 +1,7 @@
 Messenger
 =======
 
-Windows(?) GUI application for secure sending messages between multiple users and storing message history on server.
+GUI application for secure sending messages between multiple users and storing message history on server.
 
 Set it up
 ------
@@ -33,5 +33,3 @@ Set it up
 6 Run the client GUI (ip-address and port must be the same as in step 4)
 
     $ python client -a <server ip-address> -p <server port>
-    
-- NOTE: Don't run the several clients on the one machine!
